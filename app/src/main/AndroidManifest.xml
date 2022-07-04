@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.homework.book_sns">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.CAMERA" />
+
+    <application
+        android:name=".javaclass.KakaoApplication"
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.Book_SNS"
+        android:usesCleartextTraffic="true">
+        <activity
+            android:name=".act_review.activity_reply_recommendation"
+            android:exported="false" />
+        <activity
+            android:name=".act_review.activity_recommendation"
+            android:exported="false" />
+        <activity
+            android:name=".activity_member_page"
+            android:exported="false" />
+        <activity
+            android:name=".act_login_sign.activity_follow"
+            android:exported="false" />
+        <activity
+            android:name=".act_review.activity_review_update"
+            android:exported="false" />
+        <activity
+            android:name=".act_review.activity_review_create_001_direct"
+            android:exported="false" />
+        <activity
+            android:name=".act_review.activity_review_read_detail"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name=".act_review.activity_review_create_002_text_input"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name=".act_review.activity_review_create_002"
+            android:exported="false" />
+        <activity
+            android:name=".act_login_sign.activity_login_main"
+            android:exported="false" />
+        <activity
+            android:name=".act_login_sign.activity_sign_method_api_001"
+            android:exported="false" />
+        <activity
+            android:name=".activity_mypage_setting"
+            android:exported="false" />
+        <activity
+            android:name=".activity_home_main"
+            android:exported="false" />
+        <activity
+            android:name=".experient"
+            android:exported="false" />
+        <activity
+            android:name=".act_login_sign.activity_sign_finish"
+            android:exported="false" />
+        <activity
+            android:name=".act_login_sign.activity_sign_method_normal_003"
+            android:exported="false" />
+        <activity
+            android:name=".act_login_sign.activity_sign_method_normal_002"
+            android:exported="false" />
+        <activity
+            android:name=".act_login_sign.activity_sign_method_normal_001"
+            android:exported="false" />
+        <activity
+            android:name=".act_login_sign.activity_findpass_start"
+            android:exported="false" />
+        <activity
+            android:name=".act_login_sign.activity_sign_start"
+            android:exported="false" />
+        <activity
+            android:name="com.kakao.sdk.auth.AuthCodeHandlerActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <!-- Redirect URI: "kakao${NATIVE_APP_KEY}://oauth" -->
+                <data
+                    android:host="oauth"
+                    android:scheme="kakao4255aaf23ae8cf4320a77cf25d846f27" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".act_login_sign.MainActivity"
+            android:exported="true" />
+        <activity
+            android:name=".act_review.activity_review_create_001"
+            android:exported="true"
+            android:windowSoftInputMode="adjustNothing" />
+        <activity
+            android:name=".activity_app_start"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/external" />
+        </provider>
+    </application>
+
+</manifest>

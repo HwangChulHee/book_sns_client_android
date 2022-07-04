@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">도서 리뷰, 모임</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string-array name="review_reply_option">
+        <item>댓글 수정</item>
+        <item>댓글 삭제</item>
+    </string-array>
+
+    <string-array name="review_reply2_option">
+        <item>답글 수정</item>
+        <item>답글 삭제</item>
+    </string-array>
+</resources>

@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DesignSurface">
+    <option name="filePathToZoomLevelMap">
+      <map>
+        <entry key="..\:/Users/searc/AndroidStudioProjects/Book_SNS/app/src/main/res/drawable/border_all.xml" value="0.3729166666666667" />
+        <entry key="..\:/Users/searc/AndroidStudioProjects/Book_SNS/app/src/main/res/drawable/border_top.xml" value="0.378125" />
+        <entry key="..\:/Users/searc/AndroidStudioProjects/Book_SNS/app/src/main/res/drawable/border_under.xml" value="0.378125" />
+        <entry key="..\:/Users/searc/AndroidStudioProjects/Book_SNS/app/src/main/res/drawable/btn_follow.xml" value="0.38229166666666664" />
+        <entry key="..\:/Users/searc/AndroidStudioProjects/Book_SNS/app/src/main/res/drawable/btn_follow_btn_selector.xml" value="0.38229166666666664" />
+        <entry key="..\:/Users/searc/AndroidStudioProjects/Book_SNS/app/src/main/res/drawable/btn_follow_cancel.xml" value="0.28055555555555556" />
+        <entry key="..\:/Users/searc/AndroidStudioProjects/Book_SNS/app/src/main/res/drawable/btn_follow_textcolor_selector.xml" value="0.38229166666666664" />
+        <entry key="..\:/Users/searc/AndroidStudioProjects/Book_SNS/app/src/main/res/drawable/btn_following.xml" value="0.38229166666666664" />
+        <entry key="..\:/Users/searc/AndroidStudioProjects/Book_SNS/app/src/main/res/drawable/btn_following_btn_selector.xml" value="0.38229166666666664" />
+        <entry key="..\:/Users/searc/AndroidStudioProjects/Book_SNS/app/src/main/res/drawable/btn_following_textcolor_selector.xml" value="0.28055555555555556" />
+        <entry key="..\:/Users/searc/AndroidStudioProjects/Book_SNS/app/src/main/res/drawable/btn_recommendation_btn_selector.xml" value="0.38229166666666664" />
+        <entry key="..\:/Users/searc/AndroidStudioProjects/Book_SNS/app/src/main/res/drawable/btn_reply_selector.xml" value="0.38229166666666664" />
+        <entry key="..\:/Users/searc/AndroidStudioProjects/Book_SNS/app/src/main/res/drawable/ic_baseline_arrow_back_24_black.xml" value="0.378125" />
+        <entry key="..\:/Users/searc/AndroidStudioProjects/Book_SNS/app/src/main/res/drawable/ic_baseline_close_24.xml" value="0.378125" />
+        <entry key="..\:/Users/searc/AndroidStudioProjects/Book_SNS/app/src/main/res/drawable/ic_baseline_dehaze_24.xml" value="0.378125" />
+        <entry key="..\:/Users/searc/AndroidStudioProjects/Book_SNS/app/src/main/res/drawable/ic_baseline_keyboard_backspace_24.xml" value="0.378125" />
+        <entry key="..\:/Users/searc/AndroidStudioProjects/Book_SNS/app/src/main/res/drawable/ic_baseline_keyboard_backspace_24_tema.xml" value="0.378125" />
+        <entry key="..\:/Users/searc/AndroidStudioProjects/Book_SNS/app/src/main/res/drawable/ic_baseline_library_books_24.xml" value="0.22135416666666666" />
+        <entry key="..\:/Users/searc/AndroidStudioProjects/Book_SNS/app/src/main/res/drawable/ic_baseline_more_vert_24.xml" value="0.38229166666666664" />
+        <entry key="..\:/Users/searc/AndroidStudioProjects/Book_SNS/app/src/main/res/drawable/ic_baseline_person_24.xml" value="0.38229166666666664" />
+        <entry key="..\:/Users/searc/AndroidStudioProjects/Book_SNS/app/src/main/res/drawable/ic_baseline_photo_camera_24.xml" value="0.378125" />
+        <entry key="..\:/Users/searc/AndroidStudioProjects/Book_SNS/app/src/main/res/drawable/ic_baseline_settings_24.xml" value="0.38229166666666664" />
+        <entry key="..\:/Users/searc/AndroidStudioProjects/Book_SNS/app/src/main/res/drawable/ic_baseline_thumb_up_24_tema.xml" value="0.38229166666666664" />
+        <entry key="..\:/Users/searc/AndroidStudioProjects/Book_SNS/app/src/main/res/drawable/ic_baseline_thumb_up_alt_24.xml" value="0.378125" />
+        <entry key="..\:/Users/searc/AndroidStudioProjects/Book_SNS/app/src/main/res/drawable/item_color.xml" value="0.38229166666666664" />
+        <entry key="..\:/Users/searc/AndroidStudioProjects/Book_SNS/app/src/main/res/drawable/view_rrd_review_image_indicator.xml" value="0.38229166666666664" />
+        <entry key="..\:/Users/searc/AndroidStudioProjects/Book_SNS/app/src/main/res/layout/activity_app_start.xml" value="0.25" />
+        <entry key="..\:/Users/searc/AndroidStudioProjects/Book_SNS/app/src/main/res/layout/activity_experient.xml" value="0.36614583333333334" />
+        <entry key="..\:/Users/searc/AndroidStudioProjects/Book_SNS/app/src/main/res/layout/activity_findpass_finish.xml" value="0.36614583333333334" />
+        <entry key="..\:/Users/searc/AndroidStudioProjects/Book_SNS/app/src/main/res/layout/activity_findpass_main.xml" value="0.315625" />
+        <entry key="..\:/Users/searc/AndroidStudioProjects/Book_SNS/app/src/main/res/layout/activity_findpass_start.xml" value="0.3619791666666667" />
+        <entry key="..\:/Users/searc/AndroidStudioProjects/Book_SNS/app/src/main/res/layout/activity_follow.xml" value="0.36614583333333334" />
+        <entry key="..\:/Users/searc/AndroidStudioProjects/Book_SNS/app/src/main/res/layout/activity_home_main.xml" value="0.3567708333333333" />
+        <entry key="..\:/Users/searc/AndroidStudioProjects/Book_SNS/app/src/main/res/layout/activity_home_main2.xml" value="0.3567708333333333" />
+        <entry key="..\:/Users/searc/AndroidStudioProjects/Book_SNS/app/src/main/res/layout/activity_login_main.xml" value="0.315625" />
+        <entry key="..\:/Users/searc/AndroidStudioProjects/Book_SNS/app/src/main/res/layout/activity_main.xml" value="0.33" />
+        <entry key="..\:/Users/searc/AndroidStudioProjects/Book_SNS/app/src/main/res/layout/activity_main2.xml" value="0.36614583333333334" />
+        <entry key="..\:/Users/searc/AndroidStudioProjects/Book_SNS/app/src/main/res/layout/activity_member_page.xml" value="0.33" />
+        <entry key="..\:/Users/searc/AndroidStudioProjects/Book_SNS/app/src/main/res/layout/activity_mypage_setting.xml" value="0.36614583333333334" />
+        <entry key="..\:/Users/searc/AndroidStudioProjects/Book_SNS/app/src/main/res/layout/activity_recommendation.xml" value="0.3619791666666667" />
+        <entry key="..\:/Users/searc/AndroidStudioProjects/Book_SNS/app/src/main/res/layout/activity_reply_recommendation.xml" value="0.36614583333333334" />
+        <entry key="..\:/Users/searc/AndroidStudioProjects/Book_SNS/app/src/main/res/layout/activity_review_create001.xml" value="0.3619791666666667" />
+        <entry key="..\:/Users/searc/AndroidStudioProjects/Book_SNS/app/src/main/res/layout/activity_review_create002_my_gallery.xml" value="0.3619791666666667" />
+        <entry key="..\:/Users/searc/AndroidStudioProjects/Book_SNS/app/src/main/res/layout/activity_review_create002_text_input.xml" value="0.3619791666666667" />
+        <entry key="..\:/Users/searc/AndroidStudioProjects/Book_SNS/app/src/main/res/layout/activity_review_create_001.xml" value="0.3619791666666667" />
+        <entry key="..\:/Users/searc/AndroidStudioProjects/Book_SNS/app/src/main/res/layout/activity_review_create_001_direct.xml" value="0.3567708333333333" />
+        <entry key="..\:/Users/searc/AndroidStudioProjects/Book_SNS/app/src/main/res/layout/activity_review_create_002.xml" value="0.3567708333333333" />
+        <entry key="..\:/Users/searc/AndroidStudioProjects/Book_SNS/app/src/main/res/layout/activity_review_create_002_my_gallery.xml" value="0.3619791666666667" />
+        <entry key="..\:/Users/searc/AndroidStudioProjects/Book_SNS/app/src/main/res/layout/activity_review_create_002_text_input.xml" value="0.3619791666666667" />
+        <entry key="..\:/Users/searc/AndroidStudioProjects/Book_SNS/app/src/main/res/layout/activity_review_read_detail.xml" value="0.33" />
+        <entry key="..\:/Users/searc/AndroidStudioProjects/Book_SNS/app/src/main/res/layout/activity_review_read_simple.xml" value="0.36614583333333334" />
+        <entry key="..\:/Users/searc/AndroidStudioProjects/Book_SNS/app/src/main/res/layout/activity_sign_finish.xml" value="0.315625" />
+        <entry key="..\:/Users/searc/AndroidStudioProjects/Book_SNS/app/src/main/res/layout/activity_sign_method_api_001.xml" value="0.315625" />
+        <entry key="..\:/Users/searc/AndroidStudioProjects/Book_SNS/app/src/main/res/layout/activity_sign_method_normal001.xml" value="0.36614583333333334" />
+        <entry key="..\:/Users/searc/AndroidStudioProjects/Book_SNS/app/src/main/res/layout/activity_sign_method_normal004.xml" value="0.36614583333333334" />
+        <entry key="..\:/Users/searc/AndroidStudioProjects/Book_SNS/app/src/main/res/layout/activity_sign_method_normal_001.xml" value="0.36614583333333334" />
+        <entry key="..\:/Users/searc/AndroidStudioProjects/Book_SNS/app/src/main/res/layout/activity_sign_method_normal_002.xml" value="0.33" />
+        <entry key="..\:/Users/searc/AndroidStudioProjects/Book_SNS/app/src/main/res/layout/activity_sign_method_normal_003.xml" value="0.36614583333333334" />
+        <entry key="..\:/Users/searc/AndroidStudioProjects/Book_SNS/app/src/main/res/layout/activity_sign_method_normal_004.xml" value="0.36614583333333334" />
+        <entry key="..\:/Users/searc/AndroidStudioProjects/Book_SNS/app/src/main/res/layout/activity_sign_method_normal_finish.xml" value="0.36614583333333334" />
+        <entry key="..\:/Users/searc/AndroidStudioProjects/Book_SNS/app/src/main/res/layout/activity_sign_start.xml" value="0.315625" />
+        <entry key="..\:/Users/searc/AndroidStudioProjects/Book_SNS/app/src/main/res/layout/fragment_mypage.xml" value="0.33" />
+        <entry key="..\:/Users/searc/AndroidStudioProjects/Book_SNS/app/src/main/res/layout/fragment_review.xml" value="0.33" />
+        <entry key="..\:/Users/searc/AndroidStudioProjects/Book_SNS/app/src/main/res/layout/item_activity_follow.xml" value="0.36614583333333334" />
+        <entry key="..\:/Users/searc/AndroidStudioProjects/Book_SNS/app/src/main/res/layout/item_rc1_rcyv.xml" value="0.3619791666666667" />
+        <entry key="..\:/Users/searc/AndroidStudioProjects/Book_SNS/app/src/main/res/layout/item_rc1_rcyv_searched_book.xml" value="0.3619791666666667" />
+        <entry key="..\:/Users/searc/AndroidStudioProjects/Book_SNS/app/src/main/res/layout/item_rc2_grid_gallery.xml" value="0.3619791666666667" />
+        <entry key="..\:/Users/searc/AndroidStudioProjects/Book_SNS/app/src/main/res/layout/item_rc2_rcyv_photos.xml" value="0.33" />
+        <entry key="..\:/Users/searc/AndroidStudioProjects/Book_SNS/app/src/main/res/layout/item_review_create_001_rcyv.xml" value="0.33" />
+        <entry key="..\:/Users/searc/AndroidStudioProjects/Book_SNS/app/src/main/res/layout/item_review_read_detail_image.xml" value="0.3619791666666667" />
+        <entry key="..\:/Users/searc/AndroidStudioProjects/Book_SNS/app/src/main/res/layout/item_review_read_simple.xml" value="0.33" />
+        <entry key="..\:/Users/searc/AndroidStudioProjects/Book_SNS/app/src/main/res/layout/item_rrd_rcyv_reply.xml" value="0.36614583333333334" />
+        <entry key="..\:/Users/searc/AndroidStudioProjects/Book_SNS/app/src/main/res/layout/item_rrd_rcyv_reply2.xml" value="0.36614583333333334" />
+        <entry key="..\:/Users/searc/AndroidStudioProjects/Book_SNS/app/src/main/res/layout/pass_find_001_001.xml" value="0.315625" />
+        <entry key="..\:/Users/searc/AndroidStudioProjects/Book_SNS/app/src/main/res/layout/sign_000_000.xml" value="0.315625" />
+        <entry key="..\:/Users/searc/AndroidStudioProjects/Book_SNS/app/src/main/res/layout/sign_001_001.xml" value="0.315625" />
+        <entry key="..\:/Users/searc/AndroidStudioProjects/Book_SNS/app/src/main/res/layout/sign_001_002.xml" value="0.315625" />
+        <entry key="..\:/Users/searc/AndroidStudioProjects/Book_SNS/app/src/main/res/layout/sign_002_001.xml" value="0.315625" />
+        <entry key="..\:/Users/searc/AndroidStudioProjects/Book_SNS/app/src/main/res/layout/sing_002_001.xml" value="0.315625" />
+        <entry key="..\:/Users/searc/AndroidStudioProjects/Book_SNS/app/src/main/res/layout/temp.xml" value="0.36614583333333334" />
+        <entry key="..\:/Users/searc/AndroidStudioProjects/Book_SNS/app/src/main/res/layout/view_irrs_image1.xml" value="0.36614583333333334" />
+        <entry key="..\:/Users/searc/AndroidStudioProjects/Book_SNS/app/src/main/res/layout/view_irrs_image2.xml" value="0.36614583333333334" />
+        <entry key="..\:/Users/searc/AndroidStudioProjects/Book_SNS/app/src/main/res/layout/view_irrs_image3.xml" value="0.36614583333333334" />
+        <entry key="..\:/Users/searc/AndroidStudioProjects/Book_SNS/app/src/main/res/layout/view_irrs_image4.xml" value="0.36614583333333334" />
+        <entry key="..\:/Users/searc/AndroidStudioProjects/Book_SNS/app/src/main/res/layout/view_irrs_image5.xml" value="0.36614583333333334" />
+        <entry key="..\:/Users/searc/AndroidStudioProjects/Book_SNS/app/src/main/res/layout/view_mypage_setting_password.xml" value="0.3619791666666667" />
+        <entry key="..\:/Users/searc/AndroidStudioProjects/Book_SNS/app/src/main/res/layout/view_review_create_001_direct_input.xml" value="0.3619791666666667" />
+        <entry key="..\:/Users/searc/AndroidStudioProjects/Book_SNS/app/src/main/res/layout/view_review_create_001_rcyv.xml" value="0.3619791666666667" />
+        <entry key="..\:/Users/searc/AndroidStudioProjects/Book_SNS/app/src/main/res/layout/view_review_create_002_book_info.xml" value="0.3619791666666667" />
+        <entry key="..\:/Users/searc/AndroidStudioProjects/Book_SNS/app/src/main/res/layout/view_review_read_image_viewpager.xml" value="0.36614583333333334" />
+        <entry key="..\:/Users/searc/AndroidStudioProjects/Book_SNS/app/src/main/res/layout/view_review_read_simple.xml" value="0.33" />
+        <entry key="..\:/Users/searc/AndroidStudioProjects/Book_SNS/app/src/main/res/layout/view_rrd_viewpager_review_image.xml" value="0.36614583333333334" />
+        <entry key="..\:/Users/searc/AndroidStudioProjects/Book_SNS/app/src/main/res/menu/menu_bottom.xml" value="0.36614583333333334" />
+        <entry key="..\:/Users/searc/AndroidStudioProjects/Book_SNS/app/src/main/res/menu/menu_main.xml" value="0.315625" />
+        <entry key="..\:/Users/searc/AndroidStudioProjects/Book_SNS/app/src/main/res/menu/menu_popup_rc1_direct_image.xml" value="0.3567708333333333" />
+        <entry key="..\:/Users/searc/AndroidStudioProjects/Book_SNS/app/src/main/res/menu/mypage_option.xml" value="0.21770833333333334" />
+        <entry key="..\:/Users/searc/AndroidStudioProjects/Book_SNS/app/src/main/res/menu/mypage_popup.xml" value="0.36614583333333334" />
+        <entry key="..\:/Users/searc/AndroidStudioProjects/Book_SNS/app/src/main/res/menu/review_option_popup.xml" value="0.36614583333333334" />
+        <entry key="..\:/Users/searc/AndroidStudioProjects/Book_SNS/app/src/main/res/menu/review_option_popup2.xml" value="0.36614583333333334" />
+        <entry key="..\:/Users/searc/AndroidStudioProjects/Book_SNS/app/src/main/res/menu/review_option_popup3.xml" value="0.1" />
+        <entry key="..\:/Users/searc/AndroidStudioProjects/Book_SNS/app/src/main/res/menu/review_reply_popup.xml" value="0.36614583333333334" />
+        <entry key="..\:/Users/searc/AndroidStudioProjects/Book_SNS/app/src/main/res/menu/review_reply_popup2.xml" value="0.36614583333333334" />
+        <entry key="..\:/Users/searc/AndroidStudioProjects/Book_SNS/app/src/main/res/xml/external.xml" value="0.3567708333333333" />
+      </map>
+    </option>
+  </component>
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="Android Studio default JDK" project-jdk-type="JavaSDK">
+    <output url="file://$PROJECT_DIR$/build/classes" />
+  </component>
+  <component name="ProjectType">
+    <option name="id" value="Android" />
+  </component>
+</project>

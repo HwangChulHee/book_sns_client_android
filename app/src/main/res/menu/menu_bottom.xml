@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/tab1"
+        app:showAsAction="ifRoom"
+        android:enabled="true"
+        android:icon="@drawable/ic_baseline_library_books_24"
+        android:title="리뷰"/>
+    <item
+        android:id="@+id/tab2"
+        app:showAsAction="ifRoom"
+        android:icon="@drawable/ic_baseline_supervisor_account_24"
+        android:title="독서 모임" />
+
+    <item
+        android:id="@+id/tab3"
+        app:showAsAction="ifRoom"
+        android:enabled="true"
+        android:icon="@drawable/ic_baseline_add_24"
+        android:title="리뷰 작성" />
+
+    <item
+        android:id="@+id/tab4"
+        app:showAsAction="ifRoom"
+        android:enabled="true"
+        android:icon="@drawable/ic_baseline_notifications_24"
+        android:title="알림" />
+
+    <item
+        android:id="@+id/tab5"
+        app:showAsAction="ifRoom"
+        android:enabled="true"
+        android:icon="@drawable/ic_baseline_person_24"
+        android:title="마이페이지" />
+
+
+</menu>
