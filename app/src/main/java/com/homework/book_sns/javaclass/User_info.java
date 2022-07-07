@@ -13,6 +13,12 @@ public class User_info implements Parcelable {
     public User_info() {
     }
 
+    public User_info(String user_id, String user_nickname, String user_profile) {
+        this.user_id = user_id;
+        this.user_nickname = user_nickname;
+        this.user_profile = user_profile;
+    }
+
     public User_info(Parcel parcel) {
         this.user_id = parcel.readString();
         this.user_nickname = parcel.readString();

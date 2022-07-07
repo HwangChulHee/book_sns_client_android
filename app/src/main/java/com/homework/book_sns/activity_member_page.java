@@ -54,6 +54,7 @@ public class activity_member_page extends AppCompatActivity {
     TextView tv_nickname;
 
     Button btn_follow;
+    Button btn_chat;
 
     LinearLayout ll_follower;
     LinearLayout ll_following;
@@ -119,6 +120,7 @@ public class activity_member_page extends AppCompatActivity {
 
 
         btn_follow = findViewById(R.id.btn_amp_follow);
+        btn_chat = findViewById(R.id.btn_amp_chatting);
 
         ll_follower = findViewById(R.id.ll_amp_follower);
         ll_following = findViewById(R.id.ll_amp_following);
@@ -164,6 +166,16 @@ public class activity_member_page extends AppCompatActivity {
                     set_follow_cancel_btn();
                     btn_follow.setSelected(true);
                 }
+            }
+        });
+
+        btn_chat.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(aContext
+                        , com.homework.book_sns.act_chatting.activity_chatting_room.class);
+                intent.putExtra("opponent_user", user_info);
+                startActivity(intent);
             }
         });
 

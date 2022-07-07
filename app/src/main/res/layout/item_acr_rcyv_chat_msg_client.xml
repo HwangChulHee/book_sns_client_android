@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="horizontal"
+    android:gravity="right">
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_gravity="bottom"
+        android:padding="7dp">
+        <TextView
+            android:id="@+id/tv_iarcmc_read_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="10"
+            android:textSize="12sp"
+            android:layout_gravity="right"
+            android:layout_marginRight="10dp"
+            android:visibility="invisible"
+            />
+        <TextView
+            android:id="@+id/tv_iarcmc_msg_time"
+            android:layout_width="70dp"
+            android:layout_height="20dp"
+            android:textSize="12sp"
+            android:text="오후 08:43"
+            android:gravity="right"
+            android:layout_gravity="bottom"
+            />
+    </LinearLayout>
+
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:cardBackgroundColor="@color/light_gray"
+        app:cardCornerRadius="5dp"
+        app:cardUseCompatPadding="true">
+
+        <TextView
+            android:id="@+id/tv_iarcmc_msg"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:maxWidth="250dp"
+            android:padding="7dp"
+            android:text="메tlwlsodyddddddddddddddddddddddddddddddddddddd" />
+    </androidx.cardview.widget.CardView>
+
+</LinearLayout>

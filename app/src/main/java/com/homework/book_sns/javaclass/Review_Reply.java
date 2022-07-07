@@ -102,7 +102,7 @@ public class Review_Reply {
 
     public void setReply_register_date(String reply_register_date) {
         SimpleDateFormat input_format    = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"); // 입력포멧
-        SimpleDateFormat update_format = new SimpleDateFormat("yyyy-MM-dd a h:m"); // 년월일시분초 14자리 포멧
+        SimpleDateFormat update_format = new SimpleDateFormat("yyyy-MM-dd a hh:mm"); // 년월일시분초 14자리 포멧
 
         try {
             String str_source = reply_register_date;         //입력포멧 문자열
