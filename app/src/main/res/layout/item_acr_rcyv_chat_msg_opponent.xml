@@ -57,7 +57,6 @@
                     android:text="10"
                     android:layout_gravity="left"
                     android:layout_marginRight="10dp"
-                    android:visibility="invisible"
                     />
                 <TextView
                     android:id="@+id/tv_iarcmo_msg_time"

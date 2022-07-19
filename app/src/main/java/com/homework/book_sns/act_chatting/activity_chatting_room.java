@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -73,47 +74,17 @@ public class activity_chatting_room extends AppCompatActivity {
     User_info opponent_user;
     Adt_acr_msg_list adt_acr_msg_list;
 
-    Socket socket;
-    PrintWriter senWriter;
-    BufferedReader receiveChat;
-    Thread socketThread;
+//    Socket socket;
+//    PrintWriter senWriter;
+//    BufferedReader receiveChat;
+//    Thread socketThread;
 
     int client_room_id;
 
+    public static Activity act_chatting_room = null;
+
     InputMethodManager imm;
     /* --------------------------- */
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-
-        new Thread() {
-            @Override
-            public void run() {
-                super.run();
-                senWriter.println(-1);
-                senWriter.flush();
-
-                if(socketThread != null) {
-                    socketThread.interrupt();
-                }
-
-                if(socket != null) {
-                    try {
-                        if(receiveChat != null) {
-                            receiveChat.close();
-                        }
-                        socket.close();
-                        senWriter.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-
-            }
-        }.start();
-
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -122,6 +93,27 @@ public class activity_chatting_room extends AppCompatActivity {
         
         myInit();
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        act_chatting_room =  activity_chatting_room.this;
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        act_chatting_room =  null;
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                service_chatting.senWriter.println("get_out_room"); // 채팅방 나가기
+                service_chatting.senWriter.flush();
+            }
+        }).start();
+    }
+
 
     private void myInit() {
         aContext = this;
@@ -271,12 +263,15 @@ public class activity_chatting_room extends AppCompatActivity {
                 String isData = entryJsonObject.getString("isData");
 
                 int room_id = entryJsonObject.getInt("room_id");
+                int read_status = entryJsonObject.getInt("read_status");
 
                 if(isData.equals("false")) {
                 } else {
                     response_loadView_parsing(jsonDataArray);
                 }
-                connectChat(Integer.toString(room_id) , LoginSharedPref.getUserId(aContext));
+
+                client_room_id = room_id;
+                enter_chatRoom(Integer.toString(room_id) , LoginSharedPref.getUserId(aContext), read_status);
             }
 
         } catch (JSONException e) {
@@ -301,10 +296,13 @@ public class activity_chatting_room extends AppCompatActivity {
             String chat_msg = jsonDataObject.getString("chat_msg");
             String chat_time = jsonDataObject.getString("chat_time");
             int read_count = jsonDataObject.getInt("read_count");
+            int room_numOfPeople = jsonDataObject.getInt("room_of_people");
+
+            Log.d(TAG, "채팅 카운트: "+read_count);
 
             Chatting_msg chatting_msg =
                     new Chatting_msg(sender_info,
-                            room_id, chat_msg, chat_time,read_count);
+                            room_id, chat_msg, chat_time,read_count, room_numOfPeople);
             adt_acr_msg_list.addItem(chatting_msg);
 
         }
@@ -315,47 +313,49 @@ public class activity_chatting_room extends AppCompatActivity {
 
     }
 
-    private void connectChat(String room_id, String user_id) {
-        client_room_id = Integer.parseInt(room_id);
+    private void enter_chatRoom(String room_id, String user_id, int read_status) {
         btn_chat_send.setEnabled(true);
 
-        socketThread = new Thread() {
+
+        new Thread(new Runnable() {
             @Override
             public void run() {
-                super.run();
-                try {
-                    InetAddress severAddr = InetAddress.getByName(MyVolleyConnection.IP);
-                    socket = new Socket(severAddr, MyVolleyConnection.CHAT_PORT);
-                    senWriter = new PrintWriter(socket.getOutputStream());
-                    senWriter.println(user_id);
-                    senWriter.println(room_id);
-                    senWriter.flush();
+                service_chatting.senWriter.println("enter_room");
+                service_chatting.senWriter.println(user_id);
+                service_chatting.senWriter.println(room_id);
+                service_chatting.senWriter.println(read_status);
+                service_chatting.senWriter.flush();
 
-                    receiveChat = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-                    while (true) {
-                        String jsonText = receiveChat.readLine();
-                        //
-                        if(jsonText != null) {
-                            storeChat(jsonText); // 이게 누군지는 어떻게 파악하지.. 파싱해줘야하나..?
-                        }
-                    }
-
-                } catch (UnknownHostException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
             }
-        };
-        socketThread.start();
+        }).start();
+
     }
 
-    private void storeChat(String jsonText) {
-        Chatting_msg chatting_msg = new Chatting_msg();
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        processChat(intent);
+    }
 
-        Gson gson = new Gson();
-        chatting_msg = gson.fromJson(jsonText, Chatting_msg.class);
+    private void processChat(Intent intent) {
+        if(intent != null) {
+            String jsonText = intent.getStringExtra("msg_from_service");
+
+            if(jsonText.equals("read_count_plus")) {
+                adt_acr_msg_list.plus_all_read_count();
+                adt_acr_msg_list.notifyDataSetChanged();
+            } else {
+                Chatting_msg chatting_msg = new Chatting_msg();
+                Gson gson = new Gson();
+                chatting_msg = gson.fromJson(jsonText, Chatting_msg.class);
+                showChat(chatting_msg);
+            }
+        }
+    }
+
+    private void showChat(Chatting_msg chatting_msg) {
         adt_acr_msg_list.addItem(chatting_msg);
+
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -366,6 +366,7 @@ public class activity_chatting_room extends AppCompatActivity {
             }
         });
     }
+
 
     private void sendJsonChat() {
         String sendText = etv_chat_input.getText().toString();
@@ -383,7 +384,8 @@ public class activity_chatting_room extends AppCompatActivity {
                 client_room_id,
                 sendText,
                 nowTime,
-                0
+                0,
+                2
                 );
         Gson gson = new Gson();
         String jsonMsgInfo = gson.toJson(client_msg);
@@ -393,8 +395,8 @@ public class activity_chatting_room extends AppCompatActivity {
             public void run() {
                 super.run();
                 try {
-                    senWriter.println(jsonMsgInfo);
-                    senWriter.flush();
+                    service_chatting.senWriter.println(jsonMsgInfo);
+                    service_chatting.senWriter.flush();
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {

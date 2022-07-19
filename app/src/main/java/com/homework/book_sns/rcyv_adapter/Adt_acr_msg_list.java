@@ -2,6 +2,7 @@ package com.homework.book_sns.rcyv_adapter;
 
 import android.content.Context;
 import android.os.Parcelable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -98,6 +99,19 @@ public class Adt_acr_msg_list extends RecyclerView.Adapter<RecyclerView.ViewHold
         return items.size();
     }
 
+    public void set_all_read_count(int read_count) {
+        for (int i =0; i < items.size(); i++) {
+            items.get(i).setRead_count(read_count);
+        }
+    }
+
+    public void plus_all_read_count() {
+        for (int i =0; i < items.size(); i++) {
+            items.get(i).plusRead_count();
+        }
+    }
+
+
     class Client_ViewHolder extends RecyclerView.ViewHolder {
         TextView tv_read_status;
         TextView tv_msg_time;
@@ -112,7 +126,7 @@ public class Adt_acr_msg_list extends RecyclerView.Adapter<RecyclerView.ViewHold
 
         private void setItem(Chatting_msg item) {
 
-            tv_read_status.setText(Integer.toString(item.getRead_count()));
+            tv_read_status.setText(item.getRead_status());
             tv_msg_time.setText(item.getTime());
             tv_msg.setText(item.getMsg());
         }
@@ -152,7 +166,11 @@ public class Adt_acr_msg_list extends RecyclerView.Adapter<RecyclerView.ViewHold
                     civ_profile.setVisibility(View.VISIBLE);
                     tv_nickname.setVisibility(View.VISIBLE);
                 }
+            } else {
+                civ_profile.setVisibility(View.VISIBLE);
+                tv_nickname.setVisibility(View.VISIBLE);
             }
+
 
             String image_url = "http://"+ MyVolleyConnection.IP
                     + item.getUser_info().getUser_profile();
@@ -163,8 +181,13 @@ public class Adt_acr_msg_list extends RecyclerView.Adapter<RecyclerView.ViewHold
             tv_nickname.setText(item.getUser_info().getUser_nickname());
             tv_msg_time.setText(item.getTime());
 
-            tv_read_status.setText(Integer.toString(item.getRead_count()));
+            tv_read_status.setText(item.getRead_status());
             tv_msg.setText(item.getMsg());
+
+//            Log.d(TAG, "position: "+position);
+//            Log.d(TAG, "setItem: "+item.getMsg());
+//            Log.d(TAG, "setItem: "+civ_profile.getVisibility());
+
         }
     }
 }

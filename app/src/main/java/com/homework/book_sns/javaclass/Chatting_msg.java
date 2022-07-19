@@ -11,17 +11,20 @@ public class Chatting_msg {
     int room_id;
     String msg;
     String time;
-    int read_count;
+    int read_count = 0;
+    int room_numOfPeople; // 채팅방 인원
+    String msg_type; // 메시지 타입 - 진짜 메시지냐, 아니면 읽음처리를 위한 메시지인가 구별..
 
     public Chatting_msg() {
     }
 
-    public Chatting_msg(User_info user_info, int room_id, String msg, String time, int read_count) {
+    public Chatting_msg(User_info user_info, int room_id, String msg, String time, int read_count, int room_numOfPeople) {
         this.user_info = user_info;
         this.room_id = room_id;
         this.msg = msg;
         this.time = setTime(time);
         this.read_count = read_count;
+        this.room_numOfPeople = room_numOfPeople;
     }
 
     private String setTime(String time) {
@@ -59,6 +62,19 @@ public class Chatting_msg {
         return read_count;
     }
 
+
+    public String getRead_status() {
+
+        int read_status = room_numOfPeople - read_count;
+
+        if(read_status == 0) {
+            return null;
+        } else {
+            return Integer.toString(read_status);
+        }
+
+    }
+
     public void remove_time() {
         time = "";
     }
@@ -68,5 +84,18 @@ public class Chatting_msg {
         return gson.toJson(this);
     }
 
+    public void setRead_count(int read_count) {
+        this.read_count = read_count;
+    }
 
+    public void plusRead_count() {
+        this.read_count++;
+        if(this.read_count > this.room_numOfPeople) {
+            this.read_count = this.room_numOfPeople;
+        }
+    }
+
+    public String getMsg_type() {
+        return msg_type;
+    }
 }

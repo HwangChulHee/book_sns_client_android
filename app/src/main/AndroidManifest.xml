@@ -10,13 +10,18 @@
     <application
         android:name=".javaclass.KakaoApplication"
         android:allowBackup="true"
-        android:largeHeap="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
+        android:largeHeap="true"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Book_SNS"
         android:usesCleartextTraffic="true">
+        <service
+            android:name=".act_chatting.service_chatting"
+            android:enabled="true"
+            android:exported="true"></service>
+
         <activity
             android:name=".act_chatting.activity_chatting_list"
             android:exported="false" />

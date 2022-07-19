@@ -19,7 +19,6 @@
             android:textSize="12sp"
             android:layout_gravity="right"
             android:layout_marginRight="10dp"
-            android:visibility="invisible"
             />
         <TextView
             android:id="@+id/tv_iarcmc_msg_time"

@@ -10,6 +10,7 @@ import android.view.MenuItem;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
+import com.homework.book_sns.act_chatting.service_chatting;
 
 public class activity_home_main extends AppCompatActivity {
 
@@ -20,6 +21,8 @@ public class activity_home_main extends AppCompatActivity {
     String user_id;
     ActionBar bar;
 
+    private Intent ServiceIntent;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -27,8 +30,16 @@ public class activity_home_main extends AppCompatActivity {
 
         setView();
         setObject();
+
+        ServiceIntent = new Intent(getApplicationContext(), service_chatting.class);
+        startService(ServiceIntent); // startservice는 앱 시작시 해줘야한다..
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        stopService(ServiceIntent);
+    }
 
     private void setView() {
 
