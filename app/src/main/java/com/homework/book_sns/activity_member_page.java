@@ -174,6 +174,7 @@ public class activity_member_page extends AppCompatActivity {
             public void onClick(View view) {
                 Intent intent = new Intent(aContext
                         , com.homework.book_sns.act_chatting.activity_chatting_room.class);
+                intent.putExtra("from", "member_page");
                 intent.putExtra("opponent_user", user_info);
                 startActivity(intent);
             }

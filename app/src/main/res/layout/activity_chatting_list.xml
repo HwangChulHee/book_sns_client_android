@@ -17,7 +17,6 @@
         android:layout_alignParentTop="true">
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/acl_l"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
@@ -65,9 +64,7 @@
             android:id="@+id/rcyv_ahl_chatList"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginStart="15dp"
             android:layout_marginTop="15dp"
-            android:layout_marginEnd="15dp"
             android:layout_marginBottom="15dp" />
 
     </ScrollView>

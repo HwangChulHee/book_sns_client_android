@@ -27,6 +27,7 @@
             android:exported="false" />
         <activity
             android:name=".act_chatting.activity_chatting_room"
+            android:windowSoftInputMode="adjustResize"
             android:exported="false" />
         <activity
             android:name=".act_review.activity_reply_recommendation"

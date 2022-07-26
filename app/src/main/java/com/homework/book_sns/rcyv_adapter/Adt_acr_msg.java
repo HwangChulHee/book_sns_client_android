@@ -1,7 +1,6 @@
 package com.homework.book_sns.rcyv_adapter;
 
 import android.content.Context;
-import android.os.Parcelable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,12 +8,15 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import com.bumptech.glide.Glide;
 import com.homework.book_sns.R;
 import com.homework.book_sns.javaclass.Chatting_msg;
+import com.homework.book_sns.javaclass.GridAutofitLayoutManager;
 import com.homework.book_sns.javaclass.LoginSharedPref;
 import com.homework.book_sns.javaclass.MyVolleyConnection;
 import com.homework.book_sns.javaclass.ViewType_Chatting;
@@ -23,7 +25,7 @@ import java.util.ArrayList;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class Adt_acr_msg_list extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class Adt_acr_msg extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     String TAG = "hch";
     private ArrayList<Chatting_msg> items = new ArrayList<>();
     Context aContext;
@@ -47,10 +49,10 @@ public class Adt_acr_msg_list extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-        if(holder instanceof Adt_acr_msg_list.Client_ViewHolder) {
-            ((Adt_acr_msg_list.Client_ViewHolder) holder).setItem(items.get(position));
-        } else if(holder instanceof Adt_acr_msg_list.Opponent_ViewHolder) {
-            ((Adt_acr_msg_list.Opponent_ViewHolder) holder).setItem(items.get(position));
+        if(holder instanceof Adt_acr_msg.Client_ViewHolder) {
+            ((Adt_acr_msg.Client_ViewHolder) holder).setItem(items.get(position));
+        } else if(holder instanceof Adt_acr_msg.Opponent_ViewHolder) {
+            ((Adt_acr_msg.Opponent_ViewHolder) holder).setItem(items.get(position));
         } else {
             return;
         }
@@ -116,12 +118,21 @@ public class Adt_acr_msg_list extends RecyclerView.Adapter<RecyclerView.ViewHold
         TextView tv_read_status;
         TextView tv_msg_time;
         TextView tv_msg;
+        RecyclerView rcyv_image;
+        Adt_acr_msg_image adt_acr_msg_image;
+
+        Context mContext;
 
         public Client_ViewHolder(@NonNull View itemView) {
             super(itemView);
+            mContext = itemView.getContext();
+
             tv_read_status = (TextView) itemView.findViewById(R.id.tv_iarcmc_read_status);
             tv_msg_time = (TextView) itemView.findViewById(R.id.tv_iarcmc_msg_time);
             tv_msg = (TextView) itemView.findViewById(R.id.tv_iarcmc_msg);
+
+            rcyv_image = (RecyclerView) itemView.findViewById(R.id.rcvy_iarcmc_image);
+            adt_acr_msg_image = new Adt_acr_msg_image();
         }
 
         private void setItem(Chatting_msg item) {
@@ -129,6 +140,60 @@ public class Adt_acr_msg_list extends RecyclerView.Adapter<RecyclerView.ViewHold
             tv_read_status.setText(item.getRead_status());
             tv_msg_time.setText(item.getTime());
             tv_msg.setText(item.getMsg());
+
+            if(item.isImage()) {
+                int count_img = item.getImages().size();
+
+                GridLayoutManager gridLayoutManager;
+                gridLayoutManager= new GridLayoutManager(aContext, 6);
+                gridLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
+                    @Override
+                    public int getSpanSize(int position) {
+                        int imageCount = item.getImages().size();
+
+
+                        if(imageCount % 3 == 0 || imageCount <= 4) {
+                            if(imageCount == 1) {
+                                return 6;
+                            } else if(imageCount == 2) {
+                                return 3;
+                            } else if(imageCount == 3) {
+                                return 2;
+                            } else if(imageCount == 4) {
+                                return 3;
+                            } else {
+                                return 2;
+                            }
+
+                        } else if(imageCount % 3 == 1) { // 나머지가 1이면 마지막 줄로부터 2줄이 2열이다. ex) 4, 7, 10
+                            if(position >= imageCount - 4) {
+                                return 3;
+                            } else {
+                                return 2;
+                            }
+                        } else { // 나머지가 2이면 마지막 줄로부터 1줄이 2열이다. ex) 5, 8, 11
+                            if(position >= imageCount - 2) {
+                                return 3;
+                            } else {
+                                return 2;
+                            }
+                        }
+                    }
+                });
+
+
+                rcyv_image.setLayoutManager(gridLayoutManager);
+                rcyv_image.setAdapter(adt_acr_msg_image);
+
+                adt_acr_msg_image.setItems(item.getImages());
+                adt_acr_msg_image.notifyDataSetChanged();
+
+                tv_msg.setVisibility(View.GONE);
+                rcyv_image.setVisibility(View.VISIBLE);
+            } else {
+                tv_msg.setVisibility(View.VISIBLE);
+                rcyv_image.setVisibility(View.GONE);
+            }
         }
     }
 
@@ -141,6 +206,8 @@ public class Adt_acr_msg_list extends RecyclerView.Adapter<RecyclerView.ViewHold
         TextView tv_read_status;
         TextView tv_msg_time;
         TextView tv_msg;
+        RecyclerView rcyv_image;
+        Adt_acr_msg_image adt_acr_msg_image;
 
         public Opponent_ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -153,6 +220,9 @@ public class Adt_acr_msg_list extends RecyclerView.Adapter<RecyclerView.ViewHold
             tv_read_status = (TextView) itemView.findViewById(R.id.tv_iarcmo_read_status);
             tv_msg_time = (TextView) itemView.findViewById(R.id.tv_iarcmo_msg_time);
             tv_msg = (TextView) itemView.findViewById(R.id.tv_iarcmo_msg);
+
+            rcyv_image = (RecyclerView) itemView.findViewById(R.id.rcvy_iarcmo_image);
+            adt_acr_msg_image = new Adt_acr_msg_image();
         }
         private void setItem(Chatting_msg item) {
             int position = getAdapterPosition();
@@ -184,9 +254,60 @@ public class Adt_acr_msg_list extends RecyclerView.Adapter<RecyclerView.ViewHold
             tv_read_status.setText(item.getRead_status());
             tv_msg.setText(item.getMsg());
 
-//            Log.d(TAG, "position: "+position);
-//            Log.d(TAG, "setItem: "+item.getMsg());
-//            Log.d(TAG, "setItem: "+civ_profile.getVisibility());
+            if(item.isImage()) {
+                int count_img = item.getImages().size();
+
+                GridLayoutManager gridLayoutManager;
+                gridLayoutManager= new GridLayoutManager(aContext, 6);
+                gridLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
+                    @Override
+                    public int getSpanSize(int position) {
+                        int imageCount = item.getImages().size();
+
+
+                        if(imageCount % 3 == 0 || imageCount <= 4) {
+                            if(imageCount == 1) {
+                                return 6;
+                            } else if(imageCount == 2) {
+                                return 3;
+                            } else if(imageCount == 3) {
+                                return 2;
+                            } else if(imageCount == 4) {
+                                return 3;
+                            } else {
+                                return 2;
+                            }
+
+                        } else if(imageCount % 3 == 1) { // 나머지가 1이면 마지막 줄로부터 2줄이 2열이다. ex) 4, 7, 10
+                            if(position >= imageCount - 4) {
+                                return 3;
+                            } else {
+                                return 2;
+                            }
+                        } else { // 나머지가 2이면 마지막 줄로부터 1줄이 2열이다. ex) 5, 8, 11
+                            if(position >= imageCount - 2) {
+                                return 3;
+                            } else {
+                                return 2;
+                            }
+                        }
+                    }
+                });
+
+
+                rcyv_image.setLayoutManager(gridLayoutManager);
+                rcyv_image.setAdapter(adt_acr_msg_image);
+
+                adt_acr_msg_image.setItems(item.getImages());
+                adt_acr_msg_image.notifyDataSetChanged();
+
+                tv_msg.setVisibility(View.GONE);
+                rcyv_image.setVisibility(View.VISIBLE);
+            } else {
+                tv_msg.setVisibility(View.VISIBLE);
+                rcyv_image.setVisibility(View.GONE);
+            }
+
 
         }
     }

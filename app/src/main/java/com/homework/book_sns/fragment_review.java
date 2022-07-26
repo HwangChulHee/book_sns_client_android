@@ -387,6 +387,12 @@ public class fragment_review extends Fragment {
             case R.id.menu_search:
                 Toast.makeText(getActivity(), "검색메뉴 선택", Toast.LENGTH_LONG).show();
                 break;
+            case R.id.menu_chatting:
+                Intent intent = new Intent(getActivity(),
+                        com.homework.book_sns.act_chatting.activity_chatting_list.class);
+                startActivity(intent);
+                break;
+
         }
         return super.onOptionsItemSelected(item);
     }

@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:background="@drawable/border_under"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:id="@+id/ll_iacl_rcyv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="7dp"
+        android:orientation="horizontal">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/civ_iacl_rcyv_opponent_profile"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_gravity="center"
+            android:src="@drawable/ic_baseline_error_24" />
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:layout_marginStart="7dp"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tv_iacl_rcyv_opponent_name"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:gravity="center_vertical"
+                android:minHeight="33dp"
+                android:text="상대방 이름"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tv_iacl_rcyv_last_msg"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:gravity="center_vertical"
+                android:minHeight="33dp"
+                android:text="채팅 내용"
+                android:textSize="14sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:layout_weight="2"
+            android:orientation="vertical"
+            android:gravity="right">
+            <TextView
+                android:id="@+id/tv_iacl_rcyv_last_msg_time"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:text="날짜" />
+            <TextView
+                android:id="@+id/tv_iacl_rcyv_remain_read_count"
+                android:layout_width="wrap_content"
+                android:layout_height="30dp"
+                android:gravity="center"
+                android:textColor="@color/white"
+                android:text="1"
+                android:background="@drawable/chat_circle"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</LinearLayout>

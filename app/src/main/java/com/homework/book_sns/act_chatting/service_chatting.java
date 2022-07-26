@@ -3,7 +3,10 @@ package com.homework.book_sns.act_chatting;
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
+import android.util.Log;
 
+import com.homework.book_sns.javaclass.Chatting_roomList_ofClient;
+import com.homework.book_sns.javaclass.LoginSharedPref;
 import com.homework.book_sns.javaclass.MyVolleyConnection;
 
 import java.io.BufferedReader;
@@ -41,13 +44,20 @@ public class service_chatting extends Service {
                     InetAddress severAddr = InetAddress.getByName(MyVolleyConnection.IP);
                     socket = new Socket(severAddr, MyVolleyConnection.CHAT_PORT);
                     senWriter = new PrintWriter(socket.getOutputStream());
+                    senWriter.println(LoginSharedPref.getUserId(getApplicationContext())); // user_id를 보내준다.
+                    senWriter.flush();
+                    Log.d("hch", "run:************** "+LoginSharedPref.getUserId(getApplicationContext()));
+
 
                     receiveChat = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                     while (true) {
                         String jsonText = receiveChat.readLine();
                         //
                         if(jsonText != null && (activity_chatting_room.act_chatting_room != null)) {
-                            sendChat_toAct(jsonText);
+                            sendChat_toChatRoom(jsonText);
+                            Log.d("hch", "run: "+jsonText);
+                        } else if(jsonText != null && (activity_chatting_list.act_chatting_list != null)) {
+                            sendChat_toChatList(jsonText);
                         }
                     }
 
@@ -66,8 +76,18 @@ public class service_chatting extends Service {
         return super.onStartCommand(intent, flags, startId);
     }
 
-    private void sendChat_toAct(String msg) {
+
+    private void sendChat_toChatRoom(String msg) {
         Intent intent = new Intent(getApplicationContext(), activity_chatting_room.class);
+        intent.putExtra("msg_from_service", msg);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK |
+                Intent.FLAG_ACTIVITY_SINGLE_TOP |
+                Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(intent);
+    }
+
+    private void sendChat_toChatList(String msg) {
+        Intent intent = new Intent(getApplicationContext(), activity_chatting_list.class);
         intent.putExtra("msg_from_service", msg);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK |
                 Intent.FLAG_ACTIVITY_SINGLE_TOP |

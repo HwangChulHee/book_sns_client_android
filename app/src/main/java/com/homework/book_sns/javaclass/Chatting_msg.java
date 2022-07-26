@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 
 public class Chatting_msg {
@@ -11,20 +12,27 @@ public class Chatting_msg {
     int room_id;
     String msg;
     String time;
+    String original_time;
     int read_count = 0;
     int room_numOfPeople; // 채팅방 인원
-    String msg_type; // 메시지 타입 - 진짜 메시지냐, 아니면 읽음처리를 위한 메시지인가 구별..
+    boolean isImage = false; // 이미지냐
+    ArrayList<String> images = new ArrayList<>(); // 이미지들
+    String msg_type; // 메시지 타입 - 채팅방에 보내는거냐, 목록에 보내는거냐
 
     public Chatting_msg() {
     }
 
-    public Chatting_msg(User_info user_info, int room_id, String msg, String time, int read_count, int room_numOfPeople) {
+    public Chatting_msg(User_info user_info, int room_id, String msg, String time,
+                        int read_count, int room_numOfPeople) {
         this.user_info = user_info;
         this.room_id = room_id;
         this.msg = msg;
+        this.original_time = time;
         this.time = setTime(time);
         this.read_count = read_count;
         this.room_numOfPeople = room_numOfPeople;
+        this.isImage = isImage;
+        this.images = images;
     }
 
     private String setTime(String time) {
@@ -97,5 +105,29 @@ public class Chatting_msg {
 
     public String getMsg_type() {
         return msg_type;
+    }
+
+    public String getOriginal_time() {
+        return original_time;
+    }
+
+    public void setImages(ArrayList<String> images) {
+        this.images = images;
+    }
+
+    public void setImage(boolean image) {
+        isImage = image;
+    }
+
+    public void setMsg(String msg) {
+        this.msg = msg;
+    }
+
+    public ArrayList<String> getImages() {
+        return images;
+    }
+
+    public boolean isImage() {
+        return isImage;
     }
 }

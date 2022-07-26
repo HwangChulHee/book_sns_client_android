@@ -1,5 +1,6 @@
 package com.homework.book_sns.act_chatting;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -8,14 +9,19 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -23,27 +29,22 @@ import android.widget.Toast;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
 import com.homework.book_sns.R;
 import com.homework.book_sns.javaclass.Chatting_msg;
+import com.homework.book_sns.javaclass.Chatting_roomList_ofClient;
 import com.homework.book_sns.javaclass.LoginSharedPref;
+import com.homework.book_sns.javaclass.MyImageFunc;
 import com.homework.book_sns.javaclass.MyVolleyConnection;
-import com.homework.book_sns.javaclass.Review_Reply;
 import com.homework.book_sns.javaclass.User_info;
-import com.homework.book_sns.rcyv_adapter.Adt_acr_msg_list;
-import com.kakao.sdk.user.model.User;
+import com.homework.book_sns.rcyv_adapter.Adt_acr_msg;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
-import java.net.InetAddress;
-import java.net.Socket;
-import java.net.UnknownHostException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 
 public class activity_chatting_room extends AppCompatActivity {
@@ -57,6 +58,7 @@ public class activity_chatting_room extends AppCompatActivity {
 
     /* --------------------------- */
     // xml의 view 객체들
+    LinearLayout rootView;
     Button btn_back;
     TextView tv_nickname;
 
@@ -72,7 +74,7 @@ public class activity_chatting_room extends AppCompatActivity {
     /* --------------------------- */
     // 각종 객체들
     User_info opponent_user;
-    Adt_acr_msg_list adt_acr_msg_list;
+    Adt_acr_msg adt_acr_msg_;
 
 //    Socket socket;
 //    PrintWriter senWriter;
@@ -84,6 +86,17 @@ public class activity_chatting_room extends AppCompatActivity {
     public static Activity act_chatting_room = null;
 
     InputMethodManager imm;
+    int viewHeight = -1;
+
+    int preViewHeight = -1;
+    boolean isInitialOriSize = false;
+    boolean isInitialKeyboardSize = false;
+    boolean activeKeyboard = false;
+    int initialSize = -1;
+    int initialKeyboardSize = -1;
+    int scrollSize = -1;
+    int minusScrollSize = -1;
+
     /* --------------------------- */
 
     @Override
@@ -94,33 +107,34 @@ public class activity_chatting_room extends AppCompatActivity {
         myInit();
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        act_chatting_room =  activity_chatting_room.this;
-    }
 
     @Override
-    protected void onStop() {
-        super.onStop();
+    protected void onDestroy() {
+        super.onDestroy();
+
         act_chatting_room =  null;
 
         new Thread(new Runnable() {
             @Override
             public void run() {
                 service_chatting.senWriter.println("get_out_room"); // 채팅방 나가기
+                service_chatting.senWriter.println(LoginSharedPref.getUserId(aContext));
+                service_chatting.senWriter.println(client_room_id);
                 service_chatting.senWriter.flush();
             }
         }).start();
     }
 
 
+
     private void myInit() {
         aContext = this;
+        ActionBar bar = getSupportActionBar();
+        bar.hide();
+
+        act_chatting_room =  activity_chatting_room.this;
 
         myGetIntent();
-        myInitView();
-        loadView_And_connectChat();
         /*
         1. 채팅방의 정보를 가져온 다음 (채팅방이 있으면 채팅방의 id와 채팅 내역을 가져오고, 없으면 채팅방 생성 후 채팅방의 id만 가져온다.)
         2. 채팅서버에 전달할 소켓을 생성하며 채팅방의 id와 user_id를 넘긴다.
@@ -130,13 +144,21 @@ public class activity_chatting_room extends AppCompatActivity {
 
     private void myGetIntent() {
         Intent intent = getIntent();
-        Bundle bundle = intent.getExtras();
-        opponent_user = bundle.getParcelable("opponent_user");
+
+        if(intent.getStringExtra("from").equals("member_page")) {
+            Bundle bundle = intent.getExtras();
+            opponent_user = bundle.getParcelable("opponent_user");
+
+            myInitView();
+            loadView_And_connectChat();
+        } else if(intent.getStringExtra("from").equals("list")) {
+            client_room_id = intent.getIntExtra("room_id", 0);
+            bring_opponent_info(client_room_id);
+        }
+
     }
 
     private void myInitView() {
-        ActionBar bar = getSupportActionBar();
-        bar.hide();
 
         myFindView();
         mySetDataView();
@@ -144,15 +166,17 @@ public class activity_chatting_room extends AppCompatActivity {
     }
 
     private void myFindView() {
+        rootView = findViewById(R.id.ll_acr_rootView);
+
         btn_back = (Button) findViewById(R.id.btn_acr_back);
         tv_nickname = (TextView) findViewById(R.id.tv_acr_nickname);
 
         rcyv_msg = (RecyclerView) findViewById(R.id.rcyv_acr_msg);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(aContext);
         rcyv_msg.setLayoutManager(linearLayoutManager);
-        adt_acr_msg_list = new Adt_acr_msg_list();
-        adt_acr_msg_list.setContext(aContext);
-        rcyv_msg.setAdapter(adt_acr_msg_list);
+        adt_acr_msg_ = new Adt_acr_msg();
+        adt_acr_msg_.setContext(aContext);
+        rcyv_msg.setAdapter(adt_acr_msg_);
 
 
         btn_camera = (Button) findViewById(R.id.btn_acr_camera);
@@ -162,6 +186,12 @@ public class activity_chatting_room extends AppCompatActivity {
 
         btn_chat_send.setEnabled(false);
         imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+
+//        if (imm.isAcceptingText()) {
+//            Toast.makeText(aContext, "Software Keyboard was shown", Toast.LENGTH_SHORT).show();
+//        } else {
+//            Toast.makeText(aContext, "Software Keyboard was not shown", Toast.LENGTH_SHORT).show();
+//        }
     }
 
     private void mySetDataView() {
@@ -186,7 +216,47 @@ public class activity_chatting_room extends AppCompatActivity {
         btn_photo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Intent intent = MyImageFunc.upload_multi_photo();
+                startActivityForResult(intent, 2222);
+            }
+        });
 
+
+        rcyv_msg.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                int currentViewHeight = rcyv_msg.getHeight();
+                if (currentViewHeight > viewHeight && preViewHeight != currentViewHeight ) {
+
+                    if(!isInitialOriSize) {
+                        initialSize = currentViewHeight;
+                        isInitialOriSize = true;
+
+                    } else {
+                        if(!isInitialKeyboardSize) {
+                            isInitialKeyboardSize = true;
+                            initialKeyboardSize = currentViewHeight;
+                        }
+
+
+                        if(!activeKeyboard) {
+                            scrollSize = initialSize - initialKeyboardSize;
+                            rcyv_msg.scrollBy(0, scrollSize);
+                            activeKeyboard = true;
+                            Log.d(TAG, "onGlobalLayout 1 :"+scrollSize);
+                            Log.d(TAG, "onGlobalLayout: entry" + initialSize);
+                            Log.d(TAG, "onGlobalLayout: entry" + initialKeyboardSize);
+                        } else {
+                            minusScrollSize = -1 * scrollSize;
+                            rcyv_msg.scrollBy(0, minusScrollSize);
+                            activeKeyboard = false;
+                            Log.d(TAG, "onGlobalLayout 2 :"+minusScrollSize);
+                            Log.d(TAG, "onGlobalLayout: "+currentViewHeight);
+                        }
+                    }
+
+                }
+                preViewHeight = currentViewHeight;
             }
         });
 
@@ -217,11 +287,70 @@ public class activity_chatting_room extends AppCompatActivity {
             public void onClick(View view) {
                 btn_chat_send.setEnabled(false);
                 imm.hideSoftInputFromWindow(etv_chat_input.getWindowToken(),0);
-                sendJsonChat();
+                sendJsonChat(false, null);
             }
         });
     }
 
+    private void bring_opponent_info(int client_room_id) {
+        MyVolleyConnection myVolleyConnection = new MyVolleyConnection(1, aContext);
+        myVolleyConnection.setURL("/chatting/ooo_bring_opponentinfo.php");
+        myVolleyConnection.addParams("client_id", LoginSharedPref.getUserId(aContext));
+        myVolleyConnection.addParams("room_id", Integer.toString(client_room_id));
+        myVolleyConnection.setVolley(new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                response_bring_opponent_info(response);
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+            }
+        });
+        myVolleyConnection.requestVolley();
+
+    }
+
+    private void response_bring_opponent_info(String response) {
+        Log.d(TAG, "response_bring_opponent_info: "+response);
+        JSONObject entryJsonObject = null;
+        try {
+            entryJsonObject = new JSONObject(response);
+            String success = entryJsonObject.getString("success");
+
+            if(success.equals("false")) {
+                String fail_reason = entryJsonObject.getString("reason");
+                Toast.makeText(aContext, fail_reason, Toast.LENGTH_LONG).show();
+
+            } else {
+
+                JSONArray jsonDataArray = entryJsonObject.getJSONArray("data");
+
+
+                String user_id;
+                String user_nickname;
+                String user_profile;
+
+                for(int i =0; i< 1; i++) {
+                    JSONObject jsonDataObject = jsonDataArray.getJSONObject(i);
+                    user_id = jsonDataObject.getString("opponent_id");
+                    user_nickname = jsonDataObject.getString("opponent_nickname");
+                    user_profile = jsonDataObject.getString("opponent_profile");
+                    opponent_user = new User_info(user_id, user_nickname, user_profile);
+                }
+
+
+                loadView_And_connectChat();
+                myInitView();
+            }
+
+        } catch (JSONException e) {
+            Log.d(TAG, "JSONException: "+e);
+        }
+
+    }
 
 
     private void loadView_And_connectChat() {
@@ -297,18 +426,34 @@ public class activity_chatting_room extends AppCompatActivity {
             String chat_time = jsonDataObject.getString("chat_time");
             int read_count = jsonDataObject.getInt("read_count");
             int room_numOfPeople = jsonDataObject.getInt("room_of_people");
+            int isImage = jsonDataObject.getInt("isImage");
+
+            ArrayList<String> images = new ArrayList<>();
+            if(isImage != 0) {
+                JSONArray jsonArray = jsonDataObject.getJSONArray("img_src");
+                for(int j=0; j < jsonArray.length(); j++ ) {
+                    images.add(jsonArray.getString(j));
+                }
+            }
+
+
+
 
             Log.d(TAG, "채팅 카운트: "+read_count);
 
             Chatting_msg chatting_msg =
                     new Chatting_msg(sender_info,
                             room_id, chat_msg, chat_time,read_count, room_numOfPeople);
-            adt_acr_msg_list.addItem(chatting_msg);
+            chatting_msg.setImage(isImage != 0);
+            chatting_msg.setImages(images);
+
+            Log.d(TAG, "response_loadView_parsing: 채팅 파싱.. "+chatting_msg);
+            adt_acr_msg_.addItem(chatting_msg);
 
         }
-        adt_acr_msg_list.notifyDataSetChanged();
-        if(adt_acr_msg_list.getSize() > 0) {
-            rcyv_msg.scrollToPosition(adt_acr_msg_list.getSize()-1);
+        adt_acr_msg_.notifyDataSetChanged();
+        if(adt_acr_msg_.getSize() > 0) {
+            rcyv_msg.scrollToPosition(adt_acr_msg_.getSize()-1);
         }
 
     }
@@ -316,20 +461,79 @@ public class activity_chatting_room extends AppCompatActivity {
     private void enter_chatRoom(String room_id, String user_id, int read_status) {
         btn_chat_send.setEnabled(true);
 
+        sendRoomList_toChattingServer(room_id, user_id, read_status);
+    }
 
-        new Thread(new Runnable() {
+    private void sendRoomList_toChattingServer(String room_id, String user_id, int read_status)  {
+
+        MyVolleyConnection myVolleyConnection = new MyVolleyConnection(1, aContext);
+        myVolleyConnection.setURL("/chatting/ooo_user_roomlist.php");
+        myVolleyConnection.addParams("client_id", LoginSharedPref.getUserId(aContext));
+        myVolleyConnection.setVolley(new Response.Listener<String>() {
             @Override
-            public void run() {
-                service_chatting.senWriter.println("enter_room");
-                service_chatting.senWriter.println(user_id);
-                service_chatting.senWriter.println(room_id);
-                service_chatting.senWriter.println(read_status);
-                service_chatting.senWriter.flush();
+            public void onResponse(String response) {
+                response_roomList(response, room_id, user_id, read_status);
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
 
             }
-        }).start();
-
+        });
+        myVolleyConnection.requestVolley();
     }
+
+    private void response_roomList(String response, String room_id, String user_id, int read_status) {
+        Log.d(TAG, "response_roomList: "+response);
+        JSONObject entryJsonObject = null;
+        try {
+            entryJsonObject = new JSONObject(response);
+            String success = entryJsonObject.getString("success");
+
+            if(success.equals("false")) {
+                String fail_reason = entryJsonObject.getString("reason");
+                Toast.makeText(aContext, fail_reason, Toast.LENGTH_LONG).show();
+
+            } else {
+
+                Chatting_roomList_ofClient roomList_ofClient = new Chatting_roomList_ofClient();
+                roomList_ofClient.setUser_id(Integer.parseInt(LoginSharedPref.getUserId(aContext)));
+
+                JSONArray jsonDataArray = entryJsonObject.getJSONArray("data");
+
+                for(int i =0; i< jsonDataArray.length(); i++) {
+                    JSONObject jsonDataObject = jsonDataArray.getJSONObject(i);
+
+                    int current_room_id = jsonDataObject.getInt("room_id");
+                    int opponent_id = jsonDataObject.getInt("opponent_id");
+                    roomList_ofClient.setRoomList(current_room_id, opponent_id);
+                }
+
+                Gson gson = new Gson();
+                String json_roomList = gson.toJson(roomList_ofClient);
+
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        service_chatting.senWriter.println("join_room");
+                        service_chatting.senWriter.println(json_roomList);
+                        service_chatting.senWriter.println(user_id);
+                        service_chatting.senWriter.println(room_id);
+                        Log.d(TAG, "run: adfadsfasd "+room_id);
+                        service_chatting.senWriter.println(read_status);
+                        service_chatting.senWriter.flush();
+
+                    }
+                }).start();
+
+
+            }
+
+        } catch (JSONException e) {
+            Log.d(TAG, "JSONException: "+e);
+        }
+    }
+
 
     @Override
     protected void onNewIntent(Intent intent) {
@@ -342,33 +546,36 @@ public class activity_chatting_room extends AppCompatActivity {
             String jsonText = intent.getStringExtra("msg_from_service");
 
             if(jsonText.equals("read_count_plus")) {
-                adt_acr_msg_list.plus_all_read_count();
-                adt_acr_msg_list.notifyDataSetChanged();
+                adt_acr_msg_.plus_all_read_count();
+                adt_acr_msg_.notifyDataSetChanged();
             } else {
                 Chatting_msg chatting_msg = new Chatting_msg();
                 Gson gson = new Gson();
                 chatting_msg = gson.fromJson(jsonText, Chatting_msg.class);
-                showChat(chatting_msg);
+                if(chatting_msg.getMsg_type().equals("chat")) {
+                    showChat(chatting_msg);
+                }
+
             }
         }
     }
 
     private void showChat(Chatting_msg chatting_msg) {
-        adt_acr_msg_list.addItem(chatting_msg);
+        adt_acr_msg_.addItem(chatting_msg);
 
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                adt_acr_msg_list.notifyDataSetChanged();
-                if(adt_acr_msg_list.getSize() > 0) {
-                    rcyv_msg.scrollToPosition(adt_acr_msg_list.getSize()-1);
+                adt_acr_msg_.notifyDataSetChanged();
+                if(adt_acr_msg_.getSize() > 0) {
+                    rcyv_msg.scrollToPosition(adt_acr_msg_.getSize()-1);
                 }
             }
         });
     }
 
 
-    private void sendJsonChat() {
+    private void sendJsonChat(boolean isImage, ArrayList<String> images) {
         String sendText = etv_chat_input.getText().toString();
         SimpleDateFormat input_format    = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"); // 입력포멧
         Date now = new Date();
@@ -387,6 +594,15 @@ public class activity_chatting_room extends AppCompatActivity {
                 0,
                 2
                 );
+
+        if (isImage) {
+            client_msg.setImage(true);
+            client_msg.setImages(images);
+            client_msg.setMsg("사진 "+images.size()+" 장을 보냈습니다.");
+        } else {
+            client_msg.setImage(false);
+        }
+
         Gson gson = new Gson();
         String jsonMsgInfo = gson.toJson(client_msg);
 
@@ -413,5 +629,28 @@ public class activity_chatting_room extends AppCompatActivity {
 
     }
 
+    private void showToast(String text) {
+        Toast.makeText(aContext, text, Toast.LENGTH_SHORT).show();
+    }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == 2222) {
+            ArrayList<Uri> images = new ArrayList<Uri>();
+            ArrayList<String> base64Images = new ArrayList<>();
+            images = MyImageFunc.result_multi_photo(data, images, aContext);
+            for(int i =0; i<images.size(); i++) {
+                Bitmap bitmap = MyImageFunc.getBitmapImage_FromUri(images.get(i), aContext);
+                String base64 = MyImageFunc.getBase64Image_FromBitmap(bitmap);
+                base64Images.add(base64);
+            }
+
+            if(images.size() != 0) {
+                sendJsonChat(true, base64Images);
+            }
+            Log.d(TAG, "onActivityResult: 이미지 개수 "+base64Images.size());
+        }
+
+    }
 }

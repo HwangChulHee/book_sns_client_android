@@ -75,17 +75,13 @@ public class MyImageFunc {
 
     static public ArrayList<Uri> result_multi_photo(Intent data, ArrayList<Uri> uriArrayList, Context context) {
         if(data == null) { // 선택 안했을 때
-            return null;
+            return uriArrayList;
         } else {
             
             if(data.getClipData() == null) { //한 장
                 Uri imageUri = data.getData();
 
-                if(dpCheck_arList(uriArrayList, imageUri)) { // 중복 체크
-                    Toast.makeText(context, "중복된 사진이 존재합니다.", Toast.LENGTH_SHORT).show();
-                    return null;
-                }
-
+                Log.d(TAG, "result_multi_photo: 한장 선택");
                 uriArrayList.add(imageUri); // uri 추가
                 
             } else { //여러장
@@ -98,10 +94,10 @@ public class MyImageFunc {
                 for (int i=0; i<upload_count; i++) {
                     Uri imageUri = clipData.getItemAt(i).getUri();
                     try {
-                        if(dpCheck_arList(uriArrayList, imageUri)) { // 중복 체크
-                            Toast.makeText(context, "중복된 사진이 존재합니다.", Toast.LENGTH_SHORT).show();
-                            continue;
-                        }
+//                        if(dpCheck_arList(uriArrayList, imageUri)) { // 중복 체크
+//                            Toast.makeText(context, "중복된 사진이 존재합니다.", Toast.LENGTH_SHORT).show();
+//                            continue;
+//                        }
                         uriArrayList.add(imageUri); // uri 추가
                     } catch (Exception e) {
                         Log.d(TAG, "onActivityResult: 파일 에러"+ e);

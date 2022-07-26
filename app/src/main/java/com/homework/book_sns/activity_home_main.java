@@ -17,6 +17,7 @@ public class activity_home_main extends AppCompatActivity {
     String TAG = "hch";
     fragment_review fragment_review;
     fragment_mypage fragment_mypage;
+    fragment_group fragment_group;
 
     String user_id;
     ActionBar bar;
@@ -38,13 +39,23 @@ public class activity_home_main extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        stopService(ServiceIntent);
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                service_chatting.senWriter.println("disconnect"); // 종료 사인
+                service_chatting.senWriter.flush();
+                stopService(ServiceIntent);
+
+            }
+        }).start();
     }
 
     private void setView() {
 
         fragment_review = new fragment_review();
         fragment_mypage = new fragment_mypage();
+        fragment_group = new fragment_group();
 
 
         getSupportFragmentManager().beginTransaction().replace(R.id.frame_home, fragment_review).commit();
@@ -62,9 +73,11 @@ public class activity_home_main extends AppCompatActivity {
                         return true;
                     case R.id.tab2:
                         bar.setTitle("독서 모임");
+                        getSupportFragmentManager().beginTransaction().replace(R.id.frame_home, fragment_group).commit();
 //                        Toast.makeText(getApplicationContext(), "모임", Toast.LENGTH_LONG).show();
                         return true;
                     case R.id.tab3:
+                        bar.setTitle("리뷰 작성");
                         Intent intent = new Intent(activity_home_main.this, com.homework.book_sns.act_review.activity_review_create_001.class);
                         intent.putExtra("update", "false");
                         startActivity(intent);
