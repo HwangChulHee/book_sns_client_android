@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -40,15 +41,16 @@ public class activity_home_main extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
 
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                service_chatting.senWriter.println("disconnect"); // 종료 사인
-                service_chatting.senWriter.flush();
-                stopService(ServiceIntent);
+//        new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//                service_chatting.senWriter.println("disconnect"); // 종료 사인
+//                service_chatting.senWriter.flush();
+//                stopService(ServiceIntent);
+//
+//            }
+//        }).start();
 
-            }
-        }).start();
     }
 
     private void setView() {

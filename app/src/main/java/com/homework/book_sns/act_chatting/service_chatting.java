@@ -126,5 +126,7 @@ public class service_chatting extends Service {
             }
         }.start();
 
+        Log.d("hch", "onDestroy: ");
+
     }
 }

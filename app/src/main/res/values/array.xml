@@ -4,4 +4,16 @@
         <item>최신순</item>
         <item>인기순</item>
     </string-array>
+
+    <string-array name="book_category">
+        <item>문학</item>
+        <item>인문</item>
+        <item>사회과학</item>
+        <item>과학기술</item>
+        <item>실용</item>
+        <item>예술/대중문화</item>
+        <item>어린이</item>
+        <item>학습</item>
+        <item>기타</item>
+    </string-array>
 </resources>

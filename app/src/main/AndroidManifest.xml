@@ -17,18 +17,29 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Book_SNS"
         android:usesCleartextTraffic="true">
+        <activity
+            android:name=".act_group.activity_group_member_management"
+            android:exported="false" />
+        <activity
+            android:name=".act_group.activity_group_page"
+            android:exported="false" />
+        <activity
+            android:name=".act_group.activity_group_make"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
+
         <service
             android:name=".act_chatting.service_chatting"
             android:enabled="true"
-            android:exported="true"></service>
+            android:exported="true" />
 
         <activity
             android:name=".act_chatting.activity_chatting_list"
             android:exported="false" />
         <activity
             android:name=".act_chatting.activity_chatting_room"
-            android:windowSoftInputMode="adjustResize"
-            android:exported="false" />
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".act_review.activity_reply_recommendation"
             android:exported="false" />

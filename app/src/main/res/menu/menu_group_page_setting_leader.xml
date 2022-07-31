@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/menu_gs_update"
+        android:title="모임 수정" />
+    <item
+        android:id="@+id/menu_gs_remove"
+        android:title="모임 삭제" />
+    <item
+        android:id="@+id/menu_gs_member"
+        android:title="멤버 관리" />
+
+</menu>
