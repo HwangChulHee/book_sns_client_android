@@ -196,6 +196,11 @@ public class activity_group_page extends AppCompatActivity {
                         break;
 
                     case R.id.btn_agp_group_chatting:
+                        Intent intent = new Intent(aContext, com.homework.book_sns.act_chatting.activity_chatting_room.class);
+                        intent.putExtra("from", "group_page");
+                        intent.putExtra("group_id", group_id);
+                        intent.putExtra("group_name", group_info.getGroup_name());
+                        startActivity(intent);
                         break;
                 }
 

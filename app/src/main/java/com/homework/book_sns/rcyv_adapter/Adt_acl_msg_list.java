@@ -125,6 +125,11 @@ public class Adt_acl_msg_list extends RecyclerView.Adapter<Adt_acl_msg_list.View
 
                     Intent intent = new Intent(mContext, com.homework.book_sns.act_chatting.activity_chatting_room.class);
                     intent.putExtra("from", "list");
+                    if(item.isGroup()) {
+                        intent.putExtra("chat_type", "group");
+                    } else {
+                        intent.putExtra("chat_type", "one");
+                    }
                     intent.putExtra("room_id", item.getRoom_id());
                     mContext.startActivity(intent);
                 }

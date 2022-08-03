@@ -82,7 +82,8 @@ public class activity_chatting_room extends AppCompatActivity {
 //    Thread socketThread;
 
     int client_room_id;
-
+    int room_of_people = 1;
+    int max_read_count = 1;
     public static Activity act_chatting_room = null;
 
     InputMethodManager imm;
@@ -96,6 +97,12 @@ public class activity_chatting_room extends AppCompatActivity {
     int initialKeyboardSize = -1;
     int scrollSize = -1;
     int minusScrollSize = -1;
+
+    String fromType = null;
+    String chatType = " ";
+
+    String groupName;
+    String groupImage;
 
     /* --------------------------- */
 
@@ -145,6 +152,8 @@ public class activity_chatting_room extends AppCompatActivity {
     private void myGetIntent() {
         Intent intent = getIntent();
 
+        fromType = intent.getStringExtra("from");
+
         if(intent.getStringExtra("from").equals("member_page")) {
             Bundle bundle = intent.getExtras();
             opponent_user = bundle.getParcelable("opponent_user");
@@ -152,8 +161,18 @@ public class activity_chatting_room extends AppCompatActivity {
             myInitView();
             loadView_And_connectChat();
         } else if(intent.getStringExtra("from").equals("list")) {
+
+            chatType = intent.getStringExtra("chat_type");
+
             client_room_id = intent.getIntExtra("room_id", 0);
             bring_opponent_info(client_room_id);
+        } else if(intent.getStringExtra("from").equals("group_page")) {
+            
+            int group_id = intent.getIntExtra("group_id", 0);
+            groupName = intent.getStringExtra("group_name");
+
+            myInitView();
+            loadView_and_connectChat_group(group_id);
         }
 
     }
@@ -195,7 +214,12 @@ public class activity_chatting_room extends AppCompatActivity {
     }
 
     private void mySetDataView() {
-        tv_nickname.setText(opponent_user.getUser_nickname());
+        if(fromType.equals("member_page") || chatType.equals("one")) {
+            tv_nickname.setText(opponent_user.getUser_nickname());
+        } else {
+            tv_nickname.setText(groupName);
+        }
+
     }
 
     private void mySetClickView() {
@@ -243,15 +267,15 @@ public class activity_chatting_room extends AppCompatActivity {
                             scrollSize = initialSize - initialKeyboardSize;
                             rcyv_msg.scrollBy(0, scrollSize);
                             activeKeyboard = true;
-                            Log.d(TAG, "onGlobalLayout 1 :"+scrollSize);
-                            Log.d(TAG, "onGlobalLayout: entry" + initialSize);
-                            Log.d(TAG, "onGlobalLayout: entry" + initialKeyboardSize);
+//                            Log.d(TAG, "onGlobalLayout 1 :"+scrollSize);
+//                            Log.d(TAG, "onGlobalLayout: entry" + initialSize);
+//                            Log.d(TAG, "onGlobalLayout: entry" + initialKeyboardSize);
                         } else {
                             minusScrollSize = -1 * scrollSize;
                             rcyv_msg.scrollBy(0, minusScrollSize);
                             activeKeyboard = false;
-                            Log.d(TAG, "onGlobalLayout 2 :"+minusScrollSize);
-                            Log.d(TAG, "onGlobalLayout: "+currentViewHeight);
+//                            Log.d(TAG, "onGlobalLayout 2 :"+minusScrollSize);
+//                            Log.d(TAG, "onGlobalLayout: "+currentViewHeight);
                         }
                     }
 
@@ -399,8 +423,24 @@ public class activity_chatting_room extends AppCompatActivity {
                     response_loadView_parsing(jsonDataArray);
                 }
 
+                String str_isNew = entryJsonObject.getString("isNew");
+                int isNew = -1;
+                if(str_isNew.equals("true")) {
+                    isNew = 1;
+                } else {
+                    isNew = 0;
+                }
+
+                String str_isEnter = entryJsonObject.getString("isEnter");
+                int isEnter = -1;
+                if(str_isEnter.equals("true")) {
+                    isEnter = 1;
+                } else {
+                    isEnter = 0;
+                }
+
                 client_room_id = room_id;
-                enter_chatRoom(Integer.toString(room_id) , LoginSharedPref.getUserId(aContext), read_status);
+                enter_chatRoom(Integer.toString(room_id) , LoginSharedPref.getUserId(aContext), read_status, isNew, isEnter);
             }
 
         } catch (JSONException e) {
@@ -425,6 +465,7 @@ public class activity_chatting_room extends AppCompatActivity {
             String chat_msg = jsonDataObject.getString("chat_msg");
             String chat_time = jsonDataObject.getString("chat_time");
             int read_count = jsonDataObject.getInt("read_count");
+            int max_count = jsonDataObject.getInt("max_read_count");
             int room_numOfPeople = jsonDataObject.getInt("room_of_people");
             int isImage = jsonDataObject.getInt("isImage");
 
@@ -436,18 +477,18 @@ public class activity_chatting_room extends AppCompatActivity {
                 }
             }
 
-
-
-
-            Log.d(TAG, "채팅 카운트: "+read_count);
-
+//            Log.d(TAG, "채팅 카운트: "+read_count);
+            max_read_count = max_count;
+            room_of_people = room_numOfPeople;
             Chatting_msg chatting_msg =
                     new Chatting_msg(sender_info,
                             room_id, chat_msg, chat_time,read_count, room_numOfPeople);
+            chatting_msg.setMax_read_count(max_read_count);
             chatting_msg.setImage(isImage != 0);
             chatting_msg.setImages(images);
+            chatting_msg.setMax_read_count(max_read_count);
 
-            Log.d(TAG, "response_loadView_parsing: 채팅 파싱.. "+chatting_msg);
+//            Log.d(TAG, "response_loadView_parsing: 채팅 파싱.. "+chatting_msg);
             adt_acr_msg_.addItem(chatting_msg);
 
         }
@@ -458,21 +499,15 @@ public class activity_chatting_room extends AppCompatActivity {
 
     }
 
-    private void enter_chatRoom(String room_id, String user_id, int read_status) {
-        btn_chat_send.setEnabled(true);
-
-        sendRoomList_toChattingServer(room_id, user_id, read_status);
-    }
-
-    private void sendRoomList_toChattingServer(String room_id, String user_id, int read_status)  {
-
+    private void loadView_and_connectChat_group(int group_id) {
         MyVolleyConnection myVolleyConnection = new MyVolleyConnection(1, aContext);
-        myVolleyConnection.setURL("/chatting/ooo_user_roomlist.php");
-        myVolleyConnection.addParams("client_id", LoginSharedPref.getUserId(aContext));
+        myVolleyConnection.setURL("/chatting/ooo_msg_read_group.php");
+        myVolleyConnection.addParams("client_id" , LoginSharedPref.getUserId(aContext));
+        myVolleyConnection.addParams("group_id", Integer.toString(group_id));
         myVolleyConnection.setVolley(new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                response_roomList(response, room_id, user_id, read_status);
+                response_loadVew(response);
             }
         }, new Response.ErrorListener() {
             @Override
@@ -483,7 +518,40 @@ public class activity_chatting_room extends AppCompatActivity {
         myVolleyConnection.requestVolley();
     }
 
-    private void response_roomList(String response, String room_id, String user_id, int read_status) {
+    private void participate_newPeople() {
+
+    }
+
+
+
+    private void enter_chatRoom(String room_id, String user_id, int read_status, int isNew, int isEnter) {
+        btn_chat_send.setEnabled(true);
+
+//        Log.d(TAG, "enter_chatRoom: room_id"+room_id);
+
+        sendRoomList_toChattingServer(room_id, user_id, read_status, isNew, isEnter);
+    }
+
+    private void sendRoomList_toChattingServer(String room_id, String user_id, int read_status, int isNew, int isEnter)  {
+
+        MyVolleyConnection myVolleyConnection = new MyVolleyConnection(1, aContext);
+        myVolleyConnection.setURL("/chatting/ooo_user_roomlist.php");
+        myVolleyConnection.addParams("client_id", LoginSharedPref.getUserId(aContext));
+        myVolleyConnection.setVolley(new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                response_roomList(response, room_id, user_id, read_status, isNew, isEnter);
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+            }
+        });
+        myVolleyConnection.requestVolley();
+    }
+
+    private void response_roomList(String response, String room_id, String user_id, int read_status, int isNew, int isEnter) {
         Log.d(TAG, "response_roomList: "+response);
         JSONObject entryJsonObject = null;
         try {
@@ -505,8 +573,13 @@ public class activity_chatting_room extends AppCompatActivity {
                     JSONObject jsonDataObject = jsonDataArray.getJSONObject(i);
 
                     int current_room_id = jsonDataObject.getInt("room_id");
-                    int opponent_id = jsonDataObject.getInt("opponent_id");
-                    roomList_ofClient.setRoomList(current_room_id, opponent_id);
+                    JSONArray room_users = jsonDataObject.getJSONArray("room_users");
+
+                    for(int j =0; j<room_users.length(); j++) {
+                        int user_id_ofRoom = room_users.getInt(j);
+                        roomList_ofClient.addRoomUser(current_room_id, user_id_ofRoom);
+                    }
+
                 }
 
                 Gson gson = new Gson();
@@ -519,8 +592,31 @@ public class activity_chatting_room extends AppCompatActivity {
                         service_chatting.senWriter.println(json_roomList);
                         service_chatting.senWriter.println(user_id);
                         service_chatting.senWriter.println(room_id);
-                        Log.d(TAG, "run: adfadsfasd "+room_id);
+//                        Log.d(TAG, "run: adfadsfasd "+room_id);
                         service_chatting.senWriter.println(read_status);
+                        service_chatting.senWriter.println(isNew);
+                        if(isEnter != 0) {
+                            SimpleDateFormat input_format    = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"); // 입력포멧
+                            Date now = new Date();
+                            String nowTime = input_format.format(now);
+
+                            User_info user_info = new User_info(
+                                    LoginSharedPref.getUserId(aContext),
+                                    LoginSharedPref.getPrefNickname(aContext),
+                                    LoginSharedPref.getPrefProfilePhoto(aContext)
+                            );
+                            Chatting_msg chatting_msg = new Chatting_msg(
+                                    user_info, Integer.parseInt(room_id), null, nowTime, 0, room_of_people
+                            );
+                            chatting_msg.setMax_read_count(max_read_count);
+                            chatting_msg.setEnter(true);
+                            Gson gson = new Gson();
+                            String jsonMsgInfo = gson.toJson(chatting_msg);
+                            service_chatting.senWriter.println(jsonMsgInfo);
+
+                        } else {
+                            //아무것도 안함.
+                        }
                         service_chatting.senWriter.flush();
 
                     }
@@ -544,10 +640,13 @@ public class activity_chatting_room extends AppCompatActivity {
     private void processChat(Intent intent) {
         if(intent != null) {
             String jsonText = intent.getStringExtra("msg_from_service");
+            Log.d(TAG, "processChat: "+jsonText);
 
             if(jsonText.equals("read_count_plus")) {
                 adt_acr_msg_.plus_all_read_count();
                 adt_acr_msg_.notifyDataSetChanged();
+            } else if(jsonText.equals("new_people")){
+                room_of_people++;
             } else {
                 Chatting_msg chatting_msg = new Chatting_msg();
                 Gson gson = new Gson();
@@ -592,7 +691,7 @@ public class activity_chatting_room extends AppCompatActivity {
                 sendText,
                 nowTime,
                 0,
-                2
+                room_of_people
                 );
 
         if (isImage) {

@@ -55,7 +55,7 @@ public class service_chatting extends Service {
                         //
                         if(jsonText != null && (activity_chatting_room.act_chatting_room != null)) {
                             sendChat_toChatRoom(jsonText);
-                            Log.d("hch", "run: "+jsonText);
+//                            Log.d("hch", "run: "+jsonText);
                         } else if(jsonText != null && (activity_chatting_list.act_chatting_list != null)) {
                             sendChat_toChatList(jsonText);
                         }

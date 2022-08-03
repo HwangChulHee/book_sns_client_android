@@ -14,6 +14,9 @@ public class Chatting_list_info {
     String change_last_msg_time;
     int remain_msg_count;
 
+    boolean isGroup;
+    Group_info group_info;
+
 
     public Chatting_list_info(User_info opponent, int room_id, int sender_id,
                               String last_msg, String last_msg_time,
@@ -25,6 +28,7 @@ public class Chatting_list_info {
         this.last_msg_time = last_msg_time;
         this.change_last_msg_time = setTime(last_msg_time);
         this.remain_msg_count = remain_msg_count;
+        this.isGroup = false;
     }
 
     private String setTime(String time) {
@@ -66,4 +70,19 @@ public class Chatting_list_info {
         return remain_msg_count;
     }
 
+    public boolean isGroup() {
+        return isGroup;
+    }
+
+    public void setGroup(boolean group) {
+        isGroup = group;
+    }
+
+    public Group_info getGroup_info() {
+        return group_info;
+    }
+
+    public void setGroup_info(Group_info group_info) {
+        this.group_info = group_info;
+    }
 }

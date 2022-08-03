@@ -14,8 +14,10 @@ public class Chatting_msg {
     String time;
     String original_time;
     int read_count = 0;
+    int max_read_count = 1;
     int room_numOfPeople; // 채팅방 인원
     boolean isImage = false; // 이미지냐
+    boolean isEnter = false; // 입장을 위한 더미데이터냐
     ArrayList<String> images = new ArrayList<>(); // 이미지들
     String msg_type; // 메시지 타입 - 채팅방에 보내는거냐, 목록에 보내는거냐
 
@@ -98,8 +100,8 @@ public class Chatting_msg {
 
     public void plusRead_count() {
         this.read_count++;
-        if(this.read_count > this.room_numOfPeople) {
-            this.read_count = this.room_numOfPeople;
+        if(this.read_count > this.max_read_count) {
+            this.read_count = this.max_read_count;
         }
     }
 
@@ -129,5 +131,21 @@ public class Chatting_msg {
 
     public boolean isImage() {
         return isImage;
+    }
+
+    public int getMax_read_count() {
+        return max_read_count;
+    }
+
+    public void setMax_read_count(int max_read_count) {
+        this.max_read_count = max_read_count;
+    }
+
+    public boolean isEnter() {
+        return isEnter;
+    }
+
+    public void setEnter(boolean enter) {
+        isEnter = enter;
     }
 }

@@ -25,5 +25,19 @@ public class Chatting_roomList_ofClient {
         roomList.put(room_id, arrayList);
     }
 
+    public void addRoomUser(int room_id, int user_id) {
+        ArrayList<Integer> arrayList = new ArrayList<>();
+
+        if(roomList.containsKey(room_id)) { //해당 방의 유저가 있다면 기존 array에 값 집어넣음.
+            arrayList = roomList.get(room_id);
+            arrayList.add(user_id);
+        } else { // 없다면 새로 생성된 array list에 추가 후 집어넣음
+            arrayList.add(user_id);
+            roomList.put(room_id, arrayList);
+
+        }
+
+    }
+
 
 }
