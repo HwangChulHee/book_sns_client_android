@@ -93,7 +93,7 @@ public class activity_sign_method_normal_003 extends AppCompatActivity {
     private void setUserInfo() {
         requestQueue = Volley.newRequestQueue(getApplicationContext());
 
-        String ip = "3.34.198.177";
+        String ip = "15.164.105.239";
         String url = "http://"+ip+"/book_sns/login_sign/upload_user_info.php";
 
         Intent intent = getIntent();
@@ -189,7 +189,7 @@ public class activity_sign_method_normal_003 extends AppCompatActivity {
 
                 params.clear();
 
-                String ip = "3.34.198.177";
+                String ip = "15.164.105.239";
                 String url = "http://"+ip+"/book_sns/login_sign/update_user_info.php";
 
                 params.put("user_id", user_id);

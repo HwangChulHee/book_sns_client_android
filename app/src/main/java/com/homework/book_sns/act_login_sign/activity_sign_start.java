@@ -40,7 +40,7 @@ import kotlin.jvm.functions.Function2;
 public class activity_sign_start extends AppCompatActivity {
 
     String TAG = "hch";
-    final String IP = "3.34.198.177";
+    final String IP = "15.164.105.239";
 
     /* --------------------------- */
     // 네이버 API 관련 변수들

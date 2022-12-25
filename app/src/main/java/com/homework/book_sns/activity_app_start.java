@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -16,6 +17,9 @@ import com.nhn.android.naverlogin.OAuthLogin;
 public class activity_app_start extends AppCompatActivity {
 
     private Intent intent;
+    private static String TAG = "hch";
+    private static String ACTIVITY_NAME = "activity_app_start";
+    private static String ACTIVITY_FUNCTION = "login";
 
     /* --------------------------- */
     // 네이버 API 관련 변수들
@@ -50,7 +54,9 @@ public class activity_app_start extends AppCompatActivity {
 
 
             intent = new Intent(activity_app_start.this, activity_home_main.class);
-            intent.putExtra("user_id", LoginSharedPref.getUserId(this).toString());
+            intent.putExtra("type", "start");
+            Log.d(TAG, "액티비티 이름: "+ACTIVITY_NAME +", 액티비티 기능 : "+ACTIVITY_FUNCTION
+                    +", 로그 내용 : "+"앱 시작");
             startActivity(intent);
             this.finish();
         }

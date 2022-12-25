@@ -25,6 +25,8 @@ import com.homework.book_sns.javaclass.Book_info;
 import com.homework.book_sns.javaclass.Follow;
 import com.homework.book_sns.javaclass.LoginSharedPref;
 import com.homework.book_sns.javaclass.MyVolleyConnection;
+import com.homework.book_sns.javaclass.Noti_info;
+import com.homework.book_sns.javaclass.Noti_msg;
 import com.homework.book_sns.javaclass.Review_list_simple_info;
 import com.homework.book_sns.javaclass.SignInfo;
 import com.homework.book_sns.javaclass.User_info;
@@ -40,9 +42,12 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class activity_member_page extends AppCompatActivity {
 
-    String TAG = "hch";
-    String IP = "3.34.198.177";
+
+    private String TAG = "hch";
+    private static String ACTIVITY_NAME = "activity_member_page";
+    private static String ACTIVITY_FUNCTION = "여러가지";
     Context aContext;
+
 
     /* --------------------------- */
     // xml의 view 객체들
@@ -72,6 +77,8 @@ public class activity_member_page extends AppCompatActivity {
     Adt_fr_review_simple adt_fr_mypage_simple;
 
     String review_sort = "recent";
+    // 1페이지에 10개씩 데이터를 불러온다
+    int page = 1, limit = 2;
     /* --------------------------- */
 
     @Override
@@ -108,6 +115,13 @@ public class activity_member_page extends AppCompatActivity {
         Intent intent = getIntent();
         Bundle bundle = intent.getExtras();
         user_info = bundle.getParcelable("user_info");
+
+        String type = intent.getStringExtra("type");
+        if(type.equals("noti")){
+            Bundle notiBundle = intent.getExtras();
+            Noti_info noti_info = notiBundle.getParcelable("noti_info");
+            process_noti_read(noti_info);
+        }
     }
 
 
@@ -128,7 +142,7 @@ public class activity_member_page extends AppCompatActivity {
         tv_following_count = findViewById(R.id.tv_amp_following_count);
         
 
-        String image_url = "http://"+IP+user_info.getUser_profile();
+        String image_url = user_info.getUser_profile();
         Glide.with(aContext).load(image_url).error(R.drawable.ic_baseline_error_24).into(civ_profile);
         tv_follow_nickname.setText(user_info.getUser_nickname());
         tv_nickname.setText(user_info.getUser_nickname());
@@ -329,6 +343,9 @@ public class activity_member_page extends AppCompatActivity {
         myVolleyConnection.addParams("object_person_id", user_info.getUser_id());
         myVolleyConnection.addParams("client_id", LoginSharedPref.getUserId(aContext));
         myVolleyConnection.addParams("review_sort", review_sort);
+        myVolleyConnection.addParams("page", String.valueOf(page));
+        myVolleyConnection.addParams("limit", String.valueOf(limit));
+
         myVolleyConnection.setVolley(new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
@@ -344,7 +361,6 @@ public class activity_member_page extends AppCompatActivity {
     }
 
     private void responseLoadMyReviewData(String response) {
-        Log.d(TAG, "responseLoadMyReviewData: "+response);
 
         JSONObject entryJsonObject = null;
         JSONArray jsonArray = null;
@@ -490,12 +506,42 @@ public class activity_member_page extends AppCompatActivity {
                 adt_fr_mypage_simple.notifyDataSetChanged();
                 btn_follow.setText("팔로잉");
                 loadFollowData();
+                send_follow_noti();
             }
 
 
         } catch (JSONException e) {
             Log.d(TAG, "JSONException: ");
         }
+    }
+
+    private void send_follow_noti() {
+        Noti_info noti_info = new Noti_info
+                (Integer.parseInt(LoginSharedPref.getUserId(aContext)),
+                        LoginSharedPref.getPrefNickname(aContext),
+                        LoginSharedPref.getPrefProfilePhoto(aContext),
+                        Integer.parseInt(user_info.getUser_id()),
+                        "팔로우",
+                        -9999,
+                        -9999
+                );
+        String jsonContent = noti_info.toJsonString();
+        Noti_msg noti_msg = new Noti_msg("noti", jsonContent);
+        String jsonMsg = noti_msg.toJsonString();
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try{
+                    Log.d(TAG, "액티비티 이름: "+ACTIVITY_NAME +", 액티비티 기능 : "+ACTIVITY_FUNCTION
+                            +", 로그 내용 : "+"noti 발송 (팔로우)");
+                    service_noti.notiWriter.println(jsonMsg);
+                    service_noti.notiWriter.flush();
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+            }
+        }).start();        
     }
 
     private void set_follow_cancel_btn() {
@@ -541,4 +587,59 @@ public class activity_member_page extends AppCompatActivity {
             Log.d(TAG, "JSONException: ");
         }
     }
+
+    private void process_noti_read(Noti_info item) {
+        MyVolleyConnection myVolleyConnection = new MyVolleyConnection(1, aContext);
+        myVolleyConnection.setURL("/noti/process_noti_read.php");
+        myVolleyConnection.addParams("user_id", String.valueOf(item.getUser_id()));
+        myVolleyConnection.addParams("target_user_id", LoginSharedPref.getUserId(aContext));
+        myVolleyConnection.addParams("noti_date", item.getNoti_date());
+        myVolleyConnection.addParams("noti_type", item.getNoti_type());
+        myVolleyConnection.addParams("noti_page_id", String.valueOf(item.getNoti_page_id()));
+        myVolleyConnection.addParams("noti_reply_id", String.valueOf(item.getNoti_reply_id()));
+
+        myVolleyConnection.setVolley(new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                response_noti_read(response);
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+            }
+        });
+        myVolleyConnection.requestVolley();
+    }
+
+    private void response_noti_read(String response) {
+        JSONObject entryJsonObject = null;
+        JSONArray jsonArray = null;
+//        Log.d(TAG, "fn response_notiData: ");
+
+        try{
+            entryJsonObject = new JSONObject(response);
+            String success = entryJsonObject.getString("success");
+
+            if(success.equals("false")){
+                String fail_reason = entryJsonObject.getString("reason");
+            }else{
+
+            }
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    private void log_activity(String msg) {
+        Log.d(TAG, "액티비티 이름: "+ACTIVITY_NAME +", 액티비티 기능 : "+ACTIVITY_FUNCTION
+                +", 로그 내용 : "+msg);
+    }
+
+    private void toast_activity(String msg) {
+        Toast.makeText(aContext, msg ,Toast.LENGTH_LONG).show();
+    }
+
+
 }

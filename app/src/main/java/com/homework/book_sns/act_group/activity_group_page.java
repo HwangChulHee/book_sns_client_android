@@ -51,6 +51,7 @@ public class activity_group_page extends AppCompatActivity {
 
     Button btn_board_write;
     Button btn_group_chatting;
+    Button btn_group_conference;
 
     RecyclerView rcyv_group_board;
 
@@ -107,6 +108,7 @@ public class activity_group_page extends AppCompatActivity {
 
         btn_board_write = findViewById(R.id.btn_agp_write_board);
         btn_group_chatting = findViewById(R.id.btn_agp_group_chatting);
+        btn_group_conference = findViewById(R.id.btn_agp_group_videoConference);
     }
 
     private void request_loadGroupInfo() {
@@ -202,6 +204,12 @@ public class activity_group_page extends AppCompatActivity {
                         intent.putExtra("group_name", group_info.getGroup_name());
                         startActivity(intent);
                         break;
+
+                    case R.id.btn_agp_group_videoConference:
+                        Intent intent1 = new Intent(aContext, com.homework.book_sns.act_group.activity_group_video_conference.class);
+                        intent1.putExtra("group_id", group_id);
+                        startActivity(intent1);
+                        break;
                 }
 
             }
@@ -211,6 +219,7 @@ public class activity_group_page extends AppCompatActivity {
         btn_group_setting.setOnClickListener(listener);
         btn_board_write.setOnClickListener(listener);
         btn_group_chatting.setOnClickListener(listener);
+        btn_group_conference.setOnClickListener(listener);
     }
 
     private void setGroupSetting(View view) {

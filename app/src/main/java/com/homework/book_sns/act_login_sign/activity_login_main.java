@@ -48,8 +48,11 @@ import kotlin.jvm.functions.Function2;
 
 public class activity_login_main extends AppCompatActivity {
 
-    String TAG = "hch";
-    final String IP = "3.34.198.177";
+    final String IP = "15.164.105.239";
+
+    private String TAG = "hch";
+    private static String ACTIVITY_NAME = "activity_login_main";
+    private static String ACTIVITY_FUNCTION = "login";
 
     /* --------------------------- */
     //회원가입 요청 변수들
@@ -191,6 +194,9 @@ public class activity_login_main extends AppCompatActivity {
                         Intent intent = new Intent(activity_login_main.this, com.homework.book_sns.activity_home_main.class);
                         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                         LoginSharedPref.setUserInfo(activity_login_main.this, user_id, sign_type, nickname, profile_photo, email);
+                        Log.d(TAG, "액티비티 이름: "+ACTIVITY_NAME +", 액티비티 기능 : "+ACTIVITY_FUNCTION
+                                +", 로그 내용 : "+"로그인 처리");
+                        intent.putExtra("type", "start");
                         startActivity(intent);
                         finish();
                     }
@@ -247,6 +253,8 @@ public class activity_login_main extends AppCompatActivity {
                         Intent intent = new Intent(activity_login_main.this, com.homework.book_sns.activity_home_main.class);
                         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                         LoginSharedPref.setUserInfo(activity_login_main.this, user_id, sign_type, nickname, profile_photo, email);
+                        intent.putExtra("type", "start");
+                        Log.d(TAG, "type - start 로그 onResponse: ");
                         startActivity(intent);
                         finish();
                     }

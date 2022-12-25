@@ -6,6 +6,7 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
+import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -17,6 +18,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -52,12 +54,18 @@ public class fragment_group extends Fragment {
     TabLayout tl_group_type;
     RecyclerView rcyv_group_list;
 
+    NestedScrollView nestedScrollView;
+    ProgressBar progressBar;
+
     /* --------------------------- */
 
     /* --------------------------- */
     // 각종 객체들
     Adt_fg_group_list adt_fg_group_list;
     String group_type = "my";
+
+    // 1페이지에 10개씩 데이터를 불러온다
+    int page = 1, limit = 7;
 
     /* --------------------------- */
 
@@ -105,13 +113,15 @@ public class fragment_group extends Fragment {
     public void onResume() {
         super.onResume();
         request_loadGroupData(group_type);
-        Log.d(TAG, "onResume: "+group_type);
+        Log.d(TAG, "fragment_group_onResume: "+group_type);
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        Log.d(TAG, "onStop: ");
+        group_type = "my";
+        page = 1;
+        Log.d(TAG, "fragment_group_onStop: ");
     }
 
     @Override
@@ -143,17 +153,23 @@ public class fragment_group extends Fragment {
         adt_fg_group_list = new Adt_fg_group_list();
         rcyv_group_list.setAdapter(adt_fg_group_list);
 
+        nestedScrollView = rootView.findViewById(R.id.nscrv_fg);
+        progressBar = rootView.findViewById(R.id.pgb_fg);
     }
 
     private void mySetClickView() {
         tl_group_type.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
+                adt_fg_group_list.cleatItem();
+                adt_fg_group_list.notifyDataSetChanged();
 
                 if(tab.getPosition() == 0) {
+                    page = 1;
                     request_loadGroupData("my");
                     group_type = "my";
                 } else if(tab.getPosition() == 1) {
+                    page = 1;
                     request_loadGroupData("entry");
                     group_type = "entry";
                 }
@@ -169,16 +185,32 @@ public class fragment_group extends Fragment {
 
             }
         });
+
+        nestedScrollView.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener() {
+            @Override
+            public void onScrollChange(NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
+                if (scrollY == v.getChildAt(0).getMeasuredHeight() - v.getMeasuredHeight())
+                {
+                    Log.d(TAG, "스크롤... onScrollChange: ");
+                    page++;
+                    progressBar.setVisibility(View.VISIBLE);
+                    request_loadGroupData(group_type);
+                }
+            }
+        });
     }
 
     private void request_loadGroupData(String group_type) {
-        adt_fg_group_list.cleatItem();
-        adt_fg_group_list.notifyDataSetChanged();
 
         MyVolleyConnection myVolleyConnection = new MyVolleyConnection(1, aContext);
         myVolleyConnection.setURL("/group/group_load_list.php");
         myVolleyConnection.addParams("client_id", LoginSharedPref.getUserId(aContext));
         myVolleyConnection.addParams("group_type", group_type);
+        myVolleyConnection.addParams("page", String.valueOf(page));
+        myVolleyConnection.addParams("limit", String.valueOf(limit));
+
+        Log.d(TAG, "request_loadGroupData: "+page);
+
         myVolleyConnection.setVolley(new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
@@ -194,7 +226,7 @@ public class fragment_group extends Fragment {
     }
 
     private void response_loadGroupData(String response) {
-        Log.d(TAG, "response_loadGroupData: "+response);
+        Log.d(TAG, "****response_loadGroupData: "+response);
         JSONObject entryJsonObject = null;
         try {
             entryJsonObject = new JSONObject(response);
@@ -207,6 +239,8 @@ public class fragment_group extends Fragment {
             } else {
 
                 JSONArray jsonDataArray = entryJsonObject.getJSONArray("data");
+
+                Log.d(TAG, "response_loadGroupData: 응답 데이터 사이즈 "+jsonDataArray.length());
 
                 for(int i =0; i< jsonDataArray.length(); i++) {
 
@@ -242,8 +276,10 @@ public class fragment_group extends Fragment {
 
                     adt_fg_group_list.addItem(group_info);
                 }
+                Log.d(TAG, "response_loadGroupData: 어탭터 사이즈 "+adt_fg_group_list.getSize());
                 adt_fg_group_list.notifyDataSetChanged();
             }
+            progressBar.setVisibility(View.GONE);
 
         } catch (JSONException e) {
             Log.d(TAG, "JSONException: "+e);

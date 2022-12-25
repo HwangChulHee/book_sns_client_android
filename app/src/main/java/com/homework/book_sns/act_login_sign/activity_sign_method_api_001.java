@@ -46,7 +46,7 @@ import kotlin.jvm.functions.Function2;
 public class activity_sign_method_api_001 extends AppCompatActivity {
 
     String TAG = "hch";
-    final String IP = "3.34.198.177";
+    final String IP = "15.164.105.239";
 
     /* --------------------------- */
     // xml의 view 객체들

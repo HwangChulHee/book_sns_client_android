@@ -27,6 +27,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
+import android.widget.ProgressBar;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -38,12 +39,15 @@ import com.homework.book_sns.R;
 import com.homework.book_sns.javaclass.Book_info;
 import com.homework.book_sns.javaclass.LoginSharedPref;
 import com.homework.book_sns.javaclass.MyVolleyConnection;
+import com.homework.book_sns.javaclass.Noti_info;
+import com.homework.book_sns.javaclass.Noti_msg;
 import com.homework.book_sns.javaclass.Review_Reply;
 import com.homework.book_sns.javaclass.Review_info;
 import com.homework.book_sns.javaclass.Review_list_simple_info;
 import com.homework.book_sns.javaclass.User_info;
 import com.homework.book_sns.rcyv_adapter.Adt_arrd_reply;
 import com.homework.book_sns.rcyv_adapter.Adt_rc2_photos;
+import com.homework.book_sns.service_noti;
 import com.homework.book_sns.vp_adapter.Adt_rrd_review_image;
 
 import org.json.JSONArray;
@@ -60,8 +64,20 @@ public class activity_review_read_detail extends AppCompatActivity {
 
     /* --------------------------- */
     // 액티비티 필수 객체들
-    Context aContext;
-    String TAG = "hch";
+
+    private String TAG = "hch";
+    private static String ACTIVITY_NAME = "activity_review_read_detail";
+    private static String ACTIVITY_FUNCTION = "리뷰 자세히 보기";
+    private static Context aContext;
+
+    private void log_activity(String msg) {
+            Log.d(TAG, "액티비티 이름: "+ACTIVITY_NAME +", 액티비티 기능 : "+ACTIVITY_FUNCTION
+            +", 로그 내용 : "+msg);
+    }
+
+    private void toast_activity(String msg) {
+            Toast.makeText(aContext, msg ,Toast.LENGTH_LONG).show();
+    }
     /* --------------------------- */
 
     /* --------------------------- */
@@ -104,6 +120,8 @@ public class activity_review_read_detail extends AppCompatActivity {
     EditText etv_reply;
     Button btn_reply;
 
+    NestedScrollView nscrv_reply;
+    ProgressBar progressBar;
     RecyclerView rcyv_reply;
 
     /* --------------------------- */
@@ -124,7 +142,11 @@ public class activity_review_read_detail extends AppCompatActivity {
     
     boolean isReply_update = false; // 수정을 구분하는 변수
     int reply_update_position; //수정을 클릭한 아이템의 위치
+
+    // 1페이지에 10개씩 데이터를 불러온다
+    int page = 1, limit = 7;
     /* --------------------------- */
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -146,6 +168,17 @@ public class activity_review_read_detail extends AppCompatActivity {
     private void setObject() {
         Intent intent = getIntent();
         review_board_id = intent.getStringExtra("review_board_id");
+
+        log_activity("review_board_id : "+review_board_id);
+
+
+        String type = intent.getStringExtra("type");
+        if(type.equals("noti")){
+            Bundle notiBundle = intent.getExtras();
+
+            Noti_info noti_info = notiBundle.getParcelable("noti_info");
+            process_noti_read(noti_info);
+        }
 
         review_imageList = new ArrayList<>();
         adt_rrd_review_image = new Adt_rrd_review_image(this, review_imageList);
@@ -203,6 +236,8 @@ public class activity_review_read_detail extends AppCompatActivity {
         etv_reply = (EditText) findViewById(R.id.etv_arrd_reply);
         btn_reply = (Button) findViewById(R.id.btn_arrd_reply);
 
+//        nscrv_reply = (NestedScrollView) findViewById(R.id.nscrv_arrd_reply);
+        progressBar = (ProgressBar) findViewById(R.id.pgb_acrd);
         rcyv_reply = (RecyclerView) findViewById(R.id.rcyv_arrd_reply);
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(aContext);
@@ -313,8 +348,7 @@ public class activity_review_read_detail extends AppCompatActivity {
 
 
 
-                String image_url = "http://"+MyVolleyConnection.IP
-                        + profile_photo;
+                String image_url = profile_photo;
                 Glide.with(getApplicationContext())
                         .load(image_url)
                         .error(R.drawable.ic_baseline_error_24)
@@ -470,6 +504,21 @@ public class activity_review_read_detail extends AppCompatActivity {
             }
         });
 
+        nscrv_main.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener() {
+            @Override
+            public void onScrollChange(NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
+
+                if (scrollY == v.getChildAt(0).getMeasuredHeight() - v.getMeasuredHeight())
+                {
+                    Log.d(TAG, "스크롤... onScrollChange: ");
+                    page++;
+                    progressBar.setVisibility(View.VISIBLE);
+                    request_loadReplyData();
+                }
+
+            }
+        });
+
         adt_arrd_reply.setOnItemClickListener(new Adt_arrd_reply.OnItemClickListener() {
             @Override
             public void onCreate_Re_Reply(View v, int pos) {
@@ -488,6 +537,9 @@ public class activity_review_read_detail extends AppCompatActivity {
         myVolleyConnection.setURL("/review/review_reply_read.php");
         myVolleyConnection.addParams("client_id" , LoginSharedPref.getUserId(aContext));
         myVolleyConnection.addParams("review_board_id", review_board_id);
+        myVolleyConnection.addParams("page", String.valueOf(page));
+        myVolleyConnection.addParams("limit", String.valueOf(limit));
+
         myVolleyConnection.setVolley(new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
@@ -575,6 +627,7 @@ public class activity_review_read_detail extends AppCompatActivity {
                     adt_arrd_reply.addItem(review_reply);
                 }
                 adt_arrd_reply.notifyDataSetChanged();
+                progressBar.setVisibility(View.GONE);
             }
 
         } catch (JSONException e) {
@@ -623,6 +676,7 @@ public class activity_review_read_detail extends AppCompatActivity {
             } else {
 
                 JSONArray jsonDataArray = entryJsonObject.getJSONArray("data");
+                String reply_id = null;
 
                 for(int i =0; i< jsonDataArray.length(); i++) {
 
@@ -642,7 +696,7 @@ public class activity_review_read_detail extends AppCompatActivity {
                     String tag_user_id = jsonDataObject.getString("tag_user_id");
                     String tag_user_nickname = jsonDataObject.getString("tag_user_nickname");
 
-                    String reply_id = jsonDataObject.getString("reply_id");
+                    reply_id = jsonDataObject.getString("reply_id");
                     String recommendation_count = jsonDataObject.getString("recommendation_count");
                     String reply_register_date = jsonDataObject.getString("reply_register_date");
                     String isClient_recommendation = jsonDataObject.getString("isClient_recommendation");
@@ -681,12 +735,43 @@ public class activity_review_read_detail extends AppCompatActivity {
                         nscrv_main.fullScroll(ScrollView.FOCUS_DOWN);
                     }
                 });
+
+                send_reply_noti(Integer.parseInt(reply_id));
             }
 
         } catch (JSONException e) {
             Log.d(TAG, "JSONException: "+e);
         }
 
+    }
+
+    private void send_reply_noti (int reply_id) {
+
+        Noti_info noti_info = new Noti_info
+                (Integer.parseInt(LoginSharedPref.getUserId(aContext)),
+                        LoginSharedPref.getPrefNickname(aContext),
+                        LoginSharedPref.getPrefProfilePhoto(aContext),
+                        Integer.parseInt(review_info.getUser_info().getUser_id()),
+                        "댓글",
+                        Integer.parseInt(review_board_id),
+                        reply_id
+                );
+        String jsonContent = noti_info.toJsonString();
+        Noti_msg noti_msg = new Noti_msg("noti", jsonContent);
+        String jsonMsg = noti_msg.toJsonString();
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try{
+                    Log.d(TAG, "noti (댓글) 발송: ");
+                    service_noti.notiWriter.println(jsonMsg);
+                    service_noti.notiWriter.flush();
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+            }
+        }).start();
     }
 
     private void re_reply_create_prepare(int position) {
@@ -1026,6 +1111,7 @@ public class activity_review_read_detail extends AppCompatActivity {
                         Toast.makeText(aContext, "추천하였습니다", Toast.LENGTH_SHORT).show();
                         review_info.setRecommendCount(review_info.getRecommendCount() + 1);
                         tv_recommendation_count.setText("추천 "+Integer.toString(review_info.getRecommendCount()) + " 개");
+                        send_recommendation_noti();
                     }
 
 
@@ -1080,6 +1166,36 @@ public class activity_review_read_detail extends AppCompatActivity {
         });
         myVolleyConnection.requestVolley();
     }
+
+    private void send_recommendation_noti () {
+
+        Noti_info noti_info = new Noti_info
+                (Integer.parseInt(LoginSharedPref.getUserId(aContext)),
+                        LoginSharedPref.getPrefNickname(aContext),
+                        LoginSharedPref.getPrefProfilePhoto(aContext),
+                        Integer.parseInt(review_info.getUser_info().getUser_id()),
+                        "추천",
+                        Integer.parseInt(review_board_id),
+                        -9999
+                );
+        String jsonContent = noti_info.toJsonString();
+        Noti_msg noti_msg = new Noti_msg("noti", jsonContent);
+        String jsonMsg = noti_msg.toJsonString();
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try{
+                    Log.d(TAG, "noti (추천) 발송: ");
+                    service_noti.notiWriter.println(jsonMsg);
+                    service_noti.notiWriter.flush();
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+    }
+
 
     private void set_follow_btn() {
         MyVolleyConnection myVolleyConnection = new MyVolleyConnection(1, aContext);
@@ -1165,5 +1281,49 @@ public class activity_review_read_detail extends AppCompatActivity {
         }
     }
 
+
+    private void process_noti_read(Noti_info item) {
+        MyVolleyConnection myVolleyConnection = new MyVolleyConnection(1, aContext);
+        myVolleyConnection.setURL("/noti/process_noti_read.php");
+        myVolleyConnection.addParams("user_id", String.valueOf(item.getUser_id()));
+        myVolleyConnection.addParams("target_user_id", LoginSharedPref.getUserId(aContext));
+        myVolleyConnection.addParams("noti_date", item.getNoti_date());
+        myVolleyConnection.addParams("noti_type", item.getNoti_type());
+        myVolleyConnection.addParams("noti_page_id", String.valueOf(item.getNoti_page_id()));
+        myVolleyConnection.addParams("noti_reply_id", String.valueOf(item.getNoti_reply_id()));
+
+        myVolleyConnection.setVolley(new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                response_noti_read(response);
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+            }
+        });
+        myVolleyConnection.requestVolley();
+    }
+
+    private void response_noti_read(String response) {
+        JSONObject entryJsonObject = null;
+        JSONArray jsonArray = null;
+//        Log.d(TAG, "fn response_notiData: ");
+
+        try{
+            entryJsonObject = new JSONObject(response);
+            String success = entryJsonObject.getString("success");
+
+            if(success.equals("false")){
+                String fail_reason = entryJsonObject.getString("reason");
+            }else{
+
+            }
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
 
 }

@@ -5,51 +5,39 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.viewpager.widget.ViewPager;
 
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.PopupMenu;
+import android.widget.ProgressBar;
 import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.bumptech.glide.Glide;
 import com.google.android.material.tabs.TabLayout;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonParser;
 import com.homework.book_sns.javaclass.Book_info;
 import com.homework.book_sns.javaclass.LoginSharedPref;
 import com.homework.book_sns.javaclass.MyVolleyConnection;
 import com.homework.book_sns.javaclass.Review_list_simple_info;
 import com.homework.book_sns.javaclass.User_info;
 import com.homework.book_sns.rcyv_adapter.Adt_fr_review_simple;
-import com.homework.book_sns.vp_adapter.Adt_rrd_review_image;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-
-import de.hdodenhof.circleimageview.CircleImageView;
-import me.relex.circleindicator.CircleIndicator;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -73,11 +61,18 @@ public class fragment_review extends Fragment {
 
     /* --------------------------- */
     // 각종 객체들
-    Spinner review_sort;
+    Spinner sp_review_sort;
+
+    NestedScrollView nestedScrollView;
     RecyclerView rcyv_review;
+    ProgressBar progressBar;
+
+    // 1페이지에 10개씩 데이터를 불러온다
+    int page = 1, limit = 2;
 
     Adt_fr_review_simple adt_fr_review_simple;
     int tabPosition;
+    String review_sort = "recent";
 
     /* --------------------------- */
 
@@ -145,9 +140,9 @@ public class fragment_review extends Fragment {
         Log.d(TAG, "onResume: ");
 
         if(tabPosition == 0) {
-            loadReviewData("following","recent");
+            loadReviewData("following", review_sort);
         } else if (tabPosition == 1) {
-            loadReviewData("entry","recent");
+            loadReviewData("entry", review_sort);
         }
 
     }
@@ -155,6 +150,7 @@ public class fragment_review extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
+        page = 1;
         adt_fr_review_simple.clearItem();
     }
 
@@ -166,8 +162,10 @@ public class fragment_review extends Fragment {
 
         tl_review_type = (TabLayout) rootView.findViewById(R.id.tl_fr_review_type);
 
-        review_sort = rootView.findViewById(R.id.home_spinner);
+        sp_review_sort = rootView.findViewById(R.id.home_spinner);
 
+        nestedScrollView = (NestedScrollView) rootView.findViewById(R.id.nsv_fr_review);
+        progressBar = (ProgressBar) rootView.findViewById(R.id.pgb_fr_review);
         rcyv_review = (RecyclerView) rootView.findViewById(R.id.rcyv_fr_review_simple);
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(aContext);
@@ -187,12 +185,13 @@ public class fragment_review extends Fragment {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 adt_fr_review_simple.clearItem();
+                page = 1;
 
                 if(tab.getPosition() == 0) {
-                    loadReviewData("following", "recent");
+                    loadReviewData("following", review_sort);
                     tabPosition = 0;
                 } else if(tab.getPosition() == 1) {
-                    loadReviewData("entry", "recent");
+                    loadReviewData("entry", review_sort);
                     tabPosition = 1;
                 }
             }
@@ -213,8 +212,8 @@ public class fragment_review extends Fragment {
                 getActivity(), android.R.layout.simple_spinner_item, items);
         adapter.setDropDownViewResource(
                 android.R.layout.simple_spinner_dropdown_item);
-        review_sort.setAdapter(adapter);
-        review_sort.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        sp_review_sort.setAdapter(adapter);
+        sp_review_sort.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
 //                Toast.makeText(getApplicationContext(), items[i], Toast.LENGTH_LONG).show();
@@ -243,6 +242,28 @@ public class fragment_review extends Fragment {
             }
         });
 
+        nestedScrollView.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener() {
+            @Override
+            public void onScrollChange(NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
+
+                Log.d(TAG, "onScrollChange 1: "+scrollY);
+                Log.d(TAG, "onScrollChange 2: "+v.getChildAt(0).getMeasuredHeight());
+                Log.d(TAG, "onScrollChange 3: "+v.getMeasuredHeight());
+                if (scrollY == v.getChildAt(0).getMeasuredHeight() - v.getMeasuredHeight())
+                {
+                    Log.d(TAG, "onScrollChange: 페이징 처리");
+                    page++;
+                    progressBar.setVisibility(View.VISIBLE);
+
+                    if(tabPosition == 0) {
+                        loadReviewData("following", review_sort);
+                    } else if(tabPosition == 1) {
+                        loadReviewData("entry", review_sort);
+                    }
+                }
+
+            }
+        });
     }
 
     private void loadReviewData(String review_type, String review_sort) { // recent (최근) 또는 popularity (인기) 순
@@ -253,6 +274,9 @@ public class fragment_review extends Fragment {
         myVolleyConnection.addParams("review_sort", review_sort);
         myVolleyConnection.addParams("object_person_id", LoginSharedPref.getUserId(aContext));
         myVolleyConnection.addParams("client_id", LoginSharedPref.getUserId(aContext));
+        myVolleyConnection.addParams("page", String.valueOf(page));
+        myVolleyConnection.addParams("limit", String.valueOf(limit));
+
         myVolleyConnection.setVolley(new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
@@ -283,6 +307,8 @@ public class fragment_review extends Fragment {
                 Toast.makeText(aContext, fail_reason, Toast.LENGTH_LONG).show();
 
             } else {
+
+                progressBar.setVisibility(View.GONE);
 
                 JSONArray jsonArray1 = entryJsonObject.getJSONArray("data");
 
@@ -369,11 +395,6 @@ public class fragment_review extends Fragment {
     }
 
 
-
-
-
-
-
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
@@ -385,7 +406,9 @@ public class fragment_review extends Fragment {
         int curId = item.getItemId();
         switch (curId) {
             case R.id.menu_search:
-                Toast.makeText(getActivity(), "검색메뉴 선택", Toast.LENGTH_LONG).show();
+                Intent sIntent = new Intent(getActivity(),
+                        activity_search_001.class);
+                startActivity(sIntent);
                 break;
             case R.id.menu_chatting:
                 Intent intent = new Intent(getActivity(),

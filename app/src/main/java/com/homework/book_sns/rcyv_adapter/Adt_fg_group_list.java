@@ -57,6 +57,8 @@ public class Adt_fg_group_list extends RecyclerView.Adapter<Adt_fg_group_list.Vi
         items.clear();
     }
 
+    public int getSize() {return items.size();}
+
 
     class ViewHolder extends RecyclerView.ViewHolder {
         LinearLayout ll_layout;

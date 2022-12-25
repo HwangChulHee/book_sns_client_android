@@ -2,6 +2,7 @@ package com.homework.book_sns.act_login_sign;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.widget.NestedScrollView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -11,6 +12,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -48,6 +50,8 @@ public class activity_follow extends AppCompatActivity {
     TabLayout.Tab tb_following;
 
     RecyclerView rcyv_follow_people;
+    ProgressBar progressBar;
+    NestedScrollView nestedScrollView;
 
     /* --------------------------- */
 
@@ -56,6 +60,9 @@ public class activity_follow extends AppCompatActivity {
     Follow follow_info;
     Adt_af_follow_people adt_af_follow_people;
     /* --------------------------- */
+
+    // 1페이지에 10개씩 데이터를 불러온다
+    int page = 1, limit = 7;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -102,6 +109,10 @@ public class activity_follow extends AppCompatActivity {
         adt_af_follow_people = new Adt_af_follow_people();
         rcyv_follow_people.setAdapter(adt_af_follow_people);
 
+
+        progressBar = findViewById(R.id.pgb_af);
+        nestedScrollView = findViewById(R.id.nscrv_af);
+
         setViewData();
         setClickEvent();
     }
@@ -125,6 +136,10 @@ public class activity_follow extends AppCompatActivity {
         myVolleyConnection.addParams("object_person_id", follow_info.getObject_person_id());
         myVolleyConnection.addParams("client_id", follow_info.getClient_id());
         myVolleyConnection.addParams("follow_type", follow_info.getFollow_type());
+        myVolleyConnection.addParams("page", String.valueOf(page));
+        myVolleyConnection.addParams("limit", String.valueOf(limit));
+
+
         myVolleyConnection.setVolley(new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
@@ -153,6 +168,8 @@ public class activity_follow extends AppCompatActivity {
             } else {
                 JSONArray jsonArray = entryJsonObject.getJSONArray("data");
 
+                Log.d(TAG, "response_FollowData: count"+jsonArray.length());
+
                 for(int i = 0 ; i < jsonArray.length(); i++) {
                     JSONObject jsonObject = jsonArray.getJSONObject(i);
 
@@ -179,6 +196,7 @@ public class activity_follow extends AppCompatActivity {
                     adt_af_follow_people.addItem(follow_for_rcyv);
                 }
                 adt_af_follow_people.notifyDataSetChanged();
+                progressBar.setVisibility(View.GONE);
             }
 
         } catch (JSONException e) {
@@ -201,6 +219,7 @@ public class activity_follow extends AppCompatActivity {
                 adt_af_follow_people.clearItem();
                 adt_af_follow_people.notifyDataSetChanged();
 
+                page = 1;
                 if(tab.getPosition() == 0) {
                     follow_info.setFollow_type("follower");
                 } else if(tab.getPosition() == 1) {
@@ -217,6 +236,21 @@ public class activity_follow extends AppCompatActivity {
 
             @Override
             public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
+
+        nestedScrollView.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener() {
+            @Override
+            public void onScrollChange(NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
+
+                if (scrollY == v.getChildAt(0).getMeasuredHeight() - v.getMeasuredHeight())
+                {
+                    Log.d(TAG, "스크롤... onScrollChange: ");
+                    page++;
+                    progressBar.setVisibility(View.VISIBLE);
+                    request_FollowData();
+                }
 
             }
         });

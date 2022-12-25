@@ -133,7 +133,7 @@ public class activity_sign_method_normal_001 extends AppCompatActivity {
     }
 
     private boolean requestEmailAuth () {
-        String ip = "3.34.198.177";
+        String ip = "15.164.105.239";
         String url = "http://"+ip+"/book_sns/login_sign/email_auth_request.php";
 
         String email_address = etv_email.getText().toString();
@@ -192,7 +192,7 @@ public class activity_sign_method_normal_001 extends AppCompatActivity {
     }
 
     private void checkEmailAuth () {
-        String ip = "3.34.198.177";
+        String ip = "15.164.105.239";
         String url = "http://"+ip+"/book_sns/login_sign/email_auth_check.php";
 
         String auth_num = etv_auth_num.getText().toString();

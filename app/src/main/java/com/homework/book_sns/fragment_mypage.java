@@ -50,7 +50,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class fragment_mypage extends Fragment {
 
     String TAG = "hch";
-    String IP = "3.34.198.177";
+    String IP = "15.164.105.239";
     Context aContext;
 
     /* --------------------------- */
@@ -141,7 +141,7 @@ public class fragment_mypage extends Fragment {
         }
 
         if(!signInfo.getImg().equals(LoginSharedPref.getPrefProfilePhoto(getActivity()))) {
-            String image_url = "http://"+IP+LoginSharedPref.getPrefProfilePhoto(getActivity());
+            String image_url = LoginSharedPref.getPrefProfilePhoto(getActivity());
             Glide.with(getActivity()).load(image_url).error(R.drawable.ic_baseline_error_24).into(civ_profile);
         }
 
@@ -170,7 +170,7 @@ public class fragment_mypage extends Fragment {
         Log.d(TAG, "setView: "+LoginSharedPref.getPrefProfilePhoto(getActivity()));
         signInfo = new SignInfo();
         signInfo.setImg(LoginSharedPref.getPrefProfilePhoto(getActivity()));
-        String image_url = "http://"+IP+LoginSharedPref.getPrefProfilePhoto(getActivity());
+        String image_url = LoginSharedPref.getPrefProfilePhoto(getActivity());
         Log.d(TAG, "setView: "+image_url);
         Glide.with(getActivity()).load(image_url).error(R.drawable.ic_baseline_error_24).into(civ_profile);
         tv_nickname.setText(LoginSharedPref.getPrefNickname(getActivity()));
@@ -314,6 +314,7 @@ public class fragment_mypage extends Fragment {
         MyVolleyConnection myVolleyConnection = new MyVolleyConnection(1, aContext);
         myVolleyConnection.setURL("/login_sign/get_user_follow_info.php");
         myVolleyConnection.addParams("user_id", LoginSharedPref.getUserId(aContext));
+
         myVolleyConnection.setVolley(new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {

@@ -101,7 +101,7 @@ public class Adt_af_follow_people extends RecyclerView.Adapter<Adt_af_follow_peo
         }
 
         public void setItem(Follow_For_RCYV item) {
-            String image_url = "http://"+ MyVolleyConnection.IP+item.getProfile_photo();
+            String image_url = item.getProfile_photo();
             Glide.with(mContext)
                     .load(image_url)
                     .error(R.drawable.ic_baseline_error_24)

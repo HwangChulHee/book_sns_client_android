@@ -30,8 +30,11 @@ import com.homework.book_sns.R;
 import com.homework.book_sns.javaclass.Book_info;
 import com.homework.book_sns.javaclass.LoginSharedPref;
 import com.homework.book_sns.javaclass.MyVolleyConnection;
+import com.homework.book_sns.javaclass.Noti_info;
+import com.homework.book_sns.javaclass.Noti_msg;
 import com.homework.book_sns.javaclass.Review_info;
 import com.homework.book_sns.javaclass.Review_list_simple_info;
+import com.homework.book_sns.service_noti;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -175,8 +178,7 @@ public class Adt_fr_review_simple extends RecyclerView.Adapter<Adt_fr_review_sim
         }
 
         public void setItem(Review_list_simple_info item) {
-            String image_url = "http://"+MyVolleyConnection.IP
-                    + item.getUser_info().getUser_profile();
+            String image_url = item.getUser_info().getUser_profile();
             Glide.with(mContext)
                     .load(image_url)
                     .error(R.drawable.ic_baseline_error_24)
@@ -250,6 +252,7 @@ public class Adt_fr_review_simple extends RecyclerView.Adapter<Adt_fr_review_sim
                     Intent intent = new Intent(mContext, com.homework.book_sns.activity_member_page.class);
                     item.getUser_info().setFollowing(item.isFollowing());
                     intent.putExtra("user_info", item.getUser_info());
+                    intent.putExtra("type", "review");
                     mContext.startActivity(intent);
                 }
             });
@@ -260,6 +263,7 @@ public class Adt_fr_review_simple extends RecyclerView.Adapter<Adt_fr_review_sim
                     Intent intent = new Intent(mContext, com.homework.book_sns.activity_member_page.class);
                     item.getUser_info().setFollowing(item.isFollowing());
                     intent.putExtra("user_info", item.getUser_info());
+                    intent.putExtra("type", "review");
                     mContext.startActivity(intent);
                 }
             });
@@ -269,6 +273,7 @@ public class Adt_fr_review_simple extends RecyclerView.Adapter<Adt_fr_review_sim
                 public void onClick(View view) {
                     Intent intent = new Intent(mContext, com.homework.book_sns.act_review.activity_review_read_detail.class);
                     intent.putExtra("review_board_id",item.getReview_id());
+                    intent.putExtra("type", "normal");
                     mContext.startActivity(intent);
                 }
             });
@@ -362,6 +367,7 @@ public class Adt_fr_review_simple extends RecyclerView.Adapter<Adt_fr_review_sim
                             items.get(position).setClient_recommendation(true);
                             items.get(position).addRecommendCount();
 
+                            send_recommendation_noti(position); // 추천 전송
                             btn_recommendation.setSelected(true);
                             notifyItemChanged(position);
                         }
@@ -379,6 +385,36 @@ public class Adt_fr_review_simple extends RecyclerView.Adapter<Adt_fr_review_sim
                 }
             });
             myVolleyConnection.requestVolley();
+        }
+
+        private void send_recommendation_noti (int position) {
+            Review_list_simple_info review_info = items.get(position);
+
+            Noti_info noti_info = new Noti_info
+                    (Integer.parseInt(LoginSharedPref.getUserId(mContext)),
+                            LoginSharedPref.getPrefNickname(mContext),
+                            LoginSharedPref.getPrefProfilePhoto(mContext),
+                            Integer.parseInt(review_info.getUser_info().getUser_id()),
+                            "추천",
+                            Integer.parseInt(review_info.getReview_id()),
+                            -9999
+                    );
+            String jsonContent = noti_info.toJsonString();
+            Noti_msg noti_msg = new Noti_msg("noti", jsonContent);
+            String jsonMsg = noti_msg.toJsonString();
+
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try{
+                        Log.d(TAG, "noti (추천) 발송: ");
+                        service_noti.notiWriter.println(jsonMsg);
+                        service_noti.notiWriter.flush();
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
         }
 
         private void set_recommendation_cancel_btn (int position) {

@@ -18,6 +18,21 @@
         android:theme="@style/Theme.Book_SNS"
         android:usesCleartextTraffic="true">
         <activity
+            android:name=".activity_search_002"
+            android:exported="false" />
+        <activity
+            android:name=".activity_search_001"
+            android:exported="false" />
+
+        <service
+            android:name=".service_noti"
+            android:enabled="true"
+            android:exported="true" />
+
+        <activity
+            android:name=".act_group.activity_group_video_conference"
+            android:exported="false" />
+        <activity
             android:name=".act_group.activity_group_member_management"
             android:exported="false" />
         <activity

@@ -142,7 +142,7 @@ public class activity_sign_method_normal_002 extends AppCompatActivity {
     }
 
     private void makeSign() {
-        String ip = "3.34.198.177";
+        String ip = "15.164.105.239";
         String url = "http://"+ip+"/book_sns/login_sign/make_user.php";
 
 

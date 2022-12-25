@@ -75,7 +75,7 @@ public class Chatting_msg {
 
     public String getRead_status() {
 
-        int read_status = room_numOfPeople - read_count;
+        int read_status = max_read_count - read_count;
 
         if(read_status == 0) {
             return null;

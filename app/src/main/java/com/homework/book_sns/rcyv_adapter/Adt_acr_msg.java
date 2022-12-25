@@ -21,7 +21,10 @@ import com.homework.book_sns.javaclass.LoginSharedPref;
 import com.homework.book_sns.javaclass.MyVolleyConnection;
 import com.homework.book_sns.javaclass.ViewType_Chatting;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -42,6 +45,9 @@ public class Adt_acr_msg extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         } else if(viewType == ViewType_Chatting.OPPONENT) {
             itemView = inflater.inflate(R.layout.item_acr_rcyv_chat_msg_opponent, parent, false);
             return new Opponent_ViewHolder(itemView);
+        } else if(viewType == ViewType_Chatting.ENTER) {
+            itemView = inflater.inflate(R.layout.item_acr_rcyv_chat_msg_enter, parent, false);
+            return new Enter_ViewHolder(itemView);
         } else {
             return null;
         }
@@ -53,6 +59,8 @@ public class Adt_acr_msg extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             ((Adt_acr_msg.Client_ViewHolder) holder).setItem(items.get(position));
         } else if(holder instanceof Adt_acr_msg.Opponent_ViewHolder) {
             ((Adt_acr_msg.Opponent_ViewHolder) holder).setItem(items.get(position));
+        } else if(holder instanceof Adt_acr_msg.Enter_ViewHolder) {
+            ((Adt_acr_msg.Enter_ViewHolder) holder).setItem(items.get(position));
         } else {
             return;
         }
@@ -61,6 +69,11 @@ public class Adt_acr_msg extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     @Override
     public int getItemViewType(int position) {
         Chatting_msg chatting_msg = items.get(position);
+
+        if(chatting_msg.isEnter()) {
+            return ViewType_Chatting.ENTER;
+        }
+
         if(chatting_msg.getUser_info().getUser_id().
                 equals(LoginSharedPref.getUserId(aContext))) { //채팅메시지를 보낸 사람이 자신이라면
             return ViewType_Chatting.CLIENT;
@@ -89,6 +102,10 @@ public class Adt_acr_msg extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         items.add(item);
     }
 
+    public void clearItem() {
+        items.clear();
+    }
+
     public void setContext(Context aContext) {
         this.aContext = aContext;
     }
@@ -107,10 +124,27 @@ public class Adt_acr_msg extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         }
     }
 
-    public void plus_all_read_count() {
-        for (int i =0; i < items.size(); i++) {
-            items.get(i).plusRead_count();
+    public void plus_specific_read_count(String time) {
+        SimpleDateFormat input_format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"); // 입력포멧
+        try {
+            Date last_readTime = input_format.parse(time); //해당 클라이언트가 채팅을 읽은 마지막 시간.
+
+            for (int i =0; i < items.size(); i++) {
+                Chatting_msg item = items.get(i);
+                Date itemTime = input_format.parse(item.getOriginal_time());
+
+                if(itemTime.compareTo(last_readTime) > 0) { // 채팅들이 기준시간 보다 크다면 읽음 처리를 해준다.
+                    item.plusRead_count();
+                    Log.d(TAG, "plus_specific_read_count: last_time "+last_readTime);
+                    Log.d(TAG, "plus_specific_read_count: item_time"+itemTime);
+                }
+            }
+
+
+        } catch (ParseException e) {
+            e.printStackTrace();
         }
+
     }
 
 
@@ -229,7 +263,8 @@ public class Adt_acr_msg extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             if(position != 0) {
                 Chatting_msg preChat_info = items.get(position-1);
 
-                if(preChat_info.getUser_info().getUser_id().equals(item.getUser_info().getUser_id())) {
+                if(preChat_info.getUser_info().getUser_id().equals(item.getUser_info().getUser_id())
+                    && !preChat_info.isEnter()) {
                     civ_profile.setVisibility(View.INVISIBLE);
                     tv_nickname.setVisibility(View.GONE);
                 } else {
@@ -309,6 +344,21 @@ public class Adt_acr_msg extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             }
 
 
+        }
+    }
+
+    class Enter_ViewHolder extends RecyclerView.ViewHolder {
+
+        TextView textView;
+
+        public Enter_ViewHolder(@NonNull View itemView) {
+            super(itemView);
+
+            textView = itemView.findViewById(R.id.tv_iarcme_msg);
+
+        }
+        private void setItem(Chatting_msg item) {
+            textView.setText(item.getMsg());
         }
     }
 }

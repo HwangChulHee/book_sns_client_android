@@ -27,7 +27,7 @@ import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
     String TAG = "temp";
-    final String IP = "3.34.198.177";
+    final String IP = "15.164.105.239";
     /* --------------------------- */
     //회원가입 요청 변수들
     RequestQueue requestQueue; // 요청이 담길 queue
@@ -48,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
 
         params.put("user_id", user_id);
 
-        String ip = "3.34.198.177";
+        String ip = "15.164.105.239";
         String url = "http://"+ip+"/book_sns/login_sign/temp.php";
 
         requestMakeSign(url);
@@ -85,7 +85,7 @@ public class MainActivity extends AppCompatActivity {
                             textView.setText(js_email);
                             textView1.setText(js_nickname);
 
-                            String ip = "3.34.198.177";
+                            String ip = "15.164.105.239";
                             String image_url = "http://"+ip+js_img_src;
                             Glide.with(getApplicationContext()).load(image_url).error(R.drawable.ic_baseline_error_24).into(imageView);
 

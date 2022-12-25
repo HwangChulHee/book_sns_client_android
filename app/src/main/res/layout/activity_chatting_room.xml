@@ -46,16 +46,39 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
     </com.google.android.material.appbar.AppBarLayout>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rcyv_acr_msg"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:layout_marginLeft="5dp"
-        android:layout_marginRight="5dp"
-        android:layout_weight="1">
 
-    </androidx.recyclerview.widget.RecyclerView>
+
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/nscrv_arr"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        >
+    </androidx.core.widget.NestedScrollView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <ProgressBar
+            android:id="@+id/pgb_acr"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rcyv_acr_msg"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_weight="1"
+            app:reverseLayout="true">
+        </androidx.recyclerview.widget.RecyclerView>
+
+    </LinearLayout>
+
+
 
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"

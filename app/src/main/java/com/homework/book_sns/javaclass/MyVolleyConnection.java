@@ -16,8 +16,9 @@ import java.util.Map;
 public class MyVolleyConnection {
 
     String TAG = "MyVolleyWebConnection";
-    public static final String IP  = "3.34.198.177";
+    public static final String IP  = "15.164.105.239";
     public static final int CHAT_PORT = 8888;
+    public static final int NOTI_PORT = 8889;
 
     /* --------------------------- */
     RequestQueue requestQueue; // 요청이 담길 queue

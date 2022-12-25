@@ -1,8 +1,10 @@
 package com.homework.book_sns.act_chatting;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.widget.NestedScrollView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -22,6 +24,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -43,6 +46,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -62,6 +66,8 @@ public class activity_chatting_room extends AppCompatActivity {
     Button btn_back;
     TextView tv_nickname;
 
+    NestedScrollView nscrv_arr;
+    ProgressBar progressBar;
     RecyclerView rcyv_msg;
 
     Button btn_camera;
@@ -75,6 +81,11 @@ public class activity_chatting_room extends AppCompatActivity {
     // 각종 객체들
     User_info opponent_user;
     Adt_acr_msg adt_acr_msg_;
+    ArrayList<Chatting_msg> chat_arrayList = new ArrayList<>();
+
+    // 1페이지에 10개씩 데이터를 불러온다
+    int page = 1, limit = 11;
+
 
 //    Socket socket;
 //    PrintWriter senWriter;
@@ -190,6 +201,8 @@ public class activity_chatting_room extends AppCompatActivity {
         btn_back = (Button) findViewById(R.id.btn_acr_back);
         tv_nickname = (TextView) findViewById(R.id.tv_acr_nickname);
 
+        nscrv_arr = (NestedScrollView) findViewById(R.id.nscrv_arr);
+        progressBar = (ProgressBar) findViewById(R.id.pgb_acr);
         rcyv_msg = (RecyclerView) findViewById(R.id.rcyv_acr_msg);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(aContext);
         rcyv_msg.setLayoutManager(linearLayoutManager);
@@ -244,6 +257,49 @@ public class activity_chatting_room extends AppCompatActivity {
                 startActivityForResult(intent, 2222);
             }
         });
+
+        nscrv_arr.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener() {
+            @Override
+            public void onScrollChange(NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
+//                if (scrollY == v.getChildAt(0).getMeasuredHeight() - v.getMeasuredHeight())
+//                {
+//                    Log.d(TAG, "onScrollChange: 페이징 처리");
+//                    page++;
+//                    progressBar.setVisibility(View.VISIBLE);
+//                    loadView_And_connectChat();
+//                }
+            }
+        });
+
+
+
+        rcyv_msg.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(@NonNull RecyclerView v, int dx, int scrollY) {
+                super.onScrolled(v, dx, scrollY);
+                Log.d(TAG, "onScrolled: "+dx+" ,"+scrollY);
+                Log.d(TAG, "onScrolled 1: "+v.getChildAt(0).getMeasuredHeight());
+                Log.d(TAG, "onScrolled 2: "+v.getScrollState());
+                Log.d(TAG, "onScrolled: "+adt_acr_msg_.getSize());
+
+                if (v.getScrollState() == 2)
+                {
+                    Log.d(TAG, "onScrollChange: 페이징 처리");
+                    page++;
+                    progressBar.setVisibility(View.VISIBLE);
+                    loadView_And_connectChat();
+                }
+            }
+        });
+
+        rcyv_msg.setOnScrollChangeListener(new View.OnScrollChangeListener() {
+            @Override
+            public void onScrollChange(View view, int i, int i1, int i2, int i3) {
+
+            }
+        });
+
+
 
 
         rcyv_msg.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
@@ -385,6 +441,9 @@ public class activity_chatting_room extends AppCompatActivity {
         myVolleyConnection.setURL("/chatting/ooo_msg_read.php");
         myVolleyConnection.addParams("client_id" , LoginSharedPref.getUserId(aContext));
         myVolleyConnection.addParams("opponent_id", opponent_user.getUser_id());
+        myVolleyConnection.addParams("page", String.valueOf(page));
+        myVolleyConnection.addParams("limit", String.valueOf(limit));
+
         myVolleyConnection.setVolley(new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
@@ -468,6 +527,7 @@ public class activity_chatting_room extends AppCompatActivity {
             int max_count = jsonDataObject.getInt("max_read_count");
             int room_numOfPeople = jsonDataObject.getInt("room_of_people");
             int isImage = jsonDataObject.getInt("isImage");
+            int isEnter = jsonDataObject.getInt("isEnter");
 
             ArrayList<String> images = new ArrayList<>();
             if(isImage != 0) {
@@ -487,16 +547,29 @@ public class activity_chatting_room extends AppCompatActivity {
             chatting_msg.setImage(isImage != 0);
             chatting_msg.setImages(images);
             chatting_msg.setMax_read_count(max_read_count);
+            if(isEnter != 0) {
+                chatting_msg.setEnter(true);
+            } else {
+                chatting_msg.setEnter(false);
+            }
 
 //            Log.d(TAG, "response_loadView_parsing: 채팅 파싱.. "+chatting_msg);
-            adt_acr_msg_.addItem(chatting_msg);
 
+            chat_arrayList.add(0, chatting_msg);
         }
-        adt_acr_msg_.notifyDataSetChanged();
-        if(adt_acr_msg_.getSize() > 0) {
+
+        adt_acr_msg_.clearItem();
+        for (int i = 0; i < chat_arrayList.size(); i++){
+            adt_acr_msg_.addItem(chat_arrayList.get(i));
+        }
+
+        if(adt_acr_msg_.getSize() <= 12) {
             rcyv_msg.scrollToPosition(adt_acr_msg_.getSize()-1);
         }
 
+        adt_acr_msg_.notifyDataSetChanged();
+
+        progressBar.setVisibility(View.GONE);
     }
 
     private void loadView_and_connectChat_group(int group_id) {
@@ -606,7 +679,8 @@ public class activity_chatting_room extends AppCompatActivity {
                                     LoginSharedPref.getPrefProfilePhoto(aContext)
                             );
                             Chatting_msg chatting_msg = new Chatting_msg(
-                                    user_info, Integer.parseInt(room_id), null, nowTime, 0, room_of_people
+                                    user_info, Integer.parseInt(room_id), user_info.getUser_nickname() + " 님이 입장하셨습니다."
+                                    , nowTime, 0, room_of_people
                             );
                             chatting_msg.setMax_read_count(max_read_count);
                             chatting_msg.setEnter(true);
@@ -642,18 +716,24 @@ public class activity_chatting_room extends AppCompatActivity {
             String jsonText = intent.getStringExtra("msg_from_service");
             Log.d(TAG, "processChat: "+jsonText);
 
-            if(jsonText.equals("read_count_plus")) {
-                adt_acr_msg_.plus_all_read_count();
-                adt_acr_msg_.notifyDataSetChanged();
-            } else if(jsonText.equals("new_people")){
-                room_of_people++;
-            } else {
+
+                if(jsonText.equals("read_count_plus")) {
+                    // isEnter로 대체.
+                } else if(jsonText.equals("new_people")){
+                    room_of_people++;
+                } else {
                 Chatting_msg chatting_msg = new Chatting_msg();
-                Gson gson = new Gson();
-                chatting_msg = gson.fromJson(jsonText, Chatting_msg.class);
-                if(chatting_msg.getMsg_type().equals("chat")) {
-                    showChat(chatting_msg);
+                Gson gson2 = new Gson();
+                chatting_msg = gson2.fromJson(jsonText, Chatting_msg.class);
+
+                if(chatting_msg.getMsg_type().equals("time")) {
+                    adt_acr_msg_.plus_specific_read_count(chatting_msg.getOriginal_time());
+                    adt_acr_msg_.notifyDataSetChanged();
+
+                } else if(chatting_msg.getMsg_type().equals("chat")) {
+                        showChat(chatting_msg);
                 }
+
 
             }
         }

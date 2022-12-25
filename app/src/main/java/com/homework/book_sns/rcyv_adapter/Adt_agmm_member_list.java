@@ -79,7 +79,7 @@ public class Adt_agmm_member_list extends RecyclerView.Adapter<Adt_agmm_member_l
         }
 
         public void setItem(Member_info item) {
-            String image_url = "http://"+ MyVolleyConnection.IP+item.getMember_image();
+            String image_url = item.getMember_image();
             Glide.with(mContext)
                     .load(image_url)
                     .error(R.drawable.ic_baseline_error_24)

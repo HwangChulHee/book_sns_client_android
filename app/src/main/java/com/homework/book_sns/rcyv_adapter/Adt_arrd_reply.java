@@ -376,7 +376,7 @@ public class Adt_arrd_reply extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 tv_content.setText(item.getReply_content());
                 Log.d(TAG, "setItem: 이거 떠야되는거 아님?");
             } else {
-                String image_url = "http://"+ MyVolleyConnection.IP+item.getUser_info().getUser_profile();
+                String image_url = item.getUser_info().getUser_profile();
                 Glide.with(mContext)
                         .load(image_url)
                         .error(R.drawable.ic_baseline_error_24)
@@ -515,7 +515,7 @@ public class Adt_arrd_reply extends RecyclerView.Adapter<RecyclerView.ViewHolder
         }
 
         private void setItem(Review_Reply item) {
-            String image_url = "http://"+ MyVolleyConnection.IP+item.getUser_info().getUser_profile();
+            String image_url = item.getUser_info().getUser_profile();
             Glide.with(mContext)
                     .load(image_url)
                     .error(R.drawable.ic_baseline_error_24)
