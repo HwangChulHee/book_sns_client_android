@@ -32,6 +32,7 @@ import com.homework.book_sns.javaclass.MyVolleyConnection;
 import com.homework.book_sns.javaclass.Review_list_simple_info;
 import com.homework.book_sns.javaclass.User_info;
 import com.homework.book_sns.rcyv_adapter.Adt_fr_review_simple;
+import com.homework.book_sns.search.activity_search_001;
 
 import org.json.JSONArray;
 import org.json.JSONException;

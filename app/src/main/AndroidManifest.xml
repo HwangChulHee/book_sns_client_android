@@ -18,10 +18,10 @@
         android:theme="@style/Theme.Book_SNS"
         android:usesCleartextTraffic="true">
         <activity
-            android:name=".activity_search_002"
+            android:name=".search.activity_search_002"
             android:exported="false" />
         <activity
-            android:name=".activity_search_001"
+            android:name=".search.activity_search_001"
             android:exported="false" />
 
         <service

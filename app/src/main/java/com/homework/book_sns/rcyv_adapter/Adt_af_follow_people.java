@@ -1,11 +1,14 @@
 package com.homework.book_sns.rcyv_adapter;
 
 import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -20,6 +23,7 @@ import com.homework.book_sns.R;
 import com.homework.book_sns.javaclass.Follow_For_RCYV;
 import com.homework.book_sns.javaclass.LoginSharedPref;
 import com.homework.book_sns.javaclass.MyVolleyConnection;
+import com.homework.book_sns.javaclass.User_info;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -56,6 +60,10 @@ public class Adt_af_follow_people extends RecyclerView.Adapter<Adt_af_follow_peo
         items.clear();
     }
 
+    public int getItemSize() {
+        return items.size();
+    }
+
     @Override
     public int getItemCount() {
         return items.size();
@@ -66,6 +74,7 @@ public class Adt_af_follow_people extends RecyclerView.Adapter<Adt_af_follow_peo
         Context mContext;
 
         CircleImageView civ_profile_photo;
+        LinearLayout ll_member_page;
         TextView tv_nickname;
         TextView tv_review_count;
         AppCompatButton btn_follow;
@@ -75,6 +84,7 @@ public class Adt_af_follow_people extends RecyclerView.Adapter<Adt_af_follow_peo
             mContext = itemView.getContext();
 
             civ_profile_photo = itemView.findViewById(R.id.civ_iaf_profile_photo);
+            ll_member_page = itemView.findViewById(R.id.ll_iaf_member_page);
             tv_nickname = itemView.findViewById(R.id.tv_iaf_nickname);
             tv_review_count = itemView.findViewById(R.id.tv_iaf_review_count);
             btn_follow = itemView.findViewById(R.id.btn_iaf_follow);
@@ -96,6 +106,23 @@ public class Adt_af_follow_people extends RecyclerView.Adapter<Adt_af_follow_peo
                         btn_follow.setText("팔로우");
                         unfollow(items.get(getAdapterPosition()));
                     }
+                }
+            });
+
+            ll_member_page.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    // activity_name(액티비티 기능)로 이동
+                    // intent 에 ~를 담아준다.
+                    int position_num = getAdapterPosition();
+                    Follow_For_RCYV item = items.get(position_num);
+                    User_info user_info = new User_info(item.getUser_id(), item.getUser_nickname(), item.getProfile_photo());
+                    user_info.setFollowing(item.isClient_relationship());
+
+                    Intent intent = new Intent(mContext, com.homework.book_sns.activity_member_page.class);
+                    intent.putExtra("user_info" , user_info);
+                    intent.putExtra("type", "rcyv");
+                    mContext.startActivity(intent);
                 }
             });
         }

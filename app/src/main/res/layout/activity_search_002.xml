@@ -4,8 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".search.activity_search_001"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    tools:context=".search.activity_search_001">
 
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
@@ -19,7 +19,7 @@
             android:layout_height="match_parent">
 
             <Button
-                android:id="@+id/btn_as1_back"
+                android:id="@+id/btn_as2_back"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:background="@drawable/ic_baseline_keyboard_backspace_24_black"
@@ -55,33 +55,57 @@
             android:background="@drawable/border_round">
 
             <EditText
-                android:id="@+id/etv_as1_search"
+                android:id="@+id/etv_as2_search"
                 android:layout_width="50dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:drawableStart="@drawable/ic_baseline_search_24"
                 android:background="@null"
+                android:drawableStart="@drawable/ic_baseline_search_24"
                 android:layout_margin="3dp"
                 android:gravity="center_vertical"
                 android:singleLine="true"/>
 
             <ImageButton
-                android:id="@+id/ibtn_as1_cancel"
+                android:id="@+id/ibtn_as2_cancel"
                 android:layout_width="50dp"
                 android:layout_height="match_parent"
-                android:src="@drawable/ic_baseline_cancel_24"
                 android:background="@null"
-                />
+                android:src="@drawable/ic_baseline_cancel_24" />
         </LinearLayout>
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rcvy_as1_recent_search"
+        <com.google.android.material.tabs.TabLayout
+            android:id="@+id/tl_as2_search_type"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginTop="10dp"/>
+            android:layout_height="wrap_content">
+
+            <com.google.android.material.tabs.TabItem
+                android:id="@+id/ti_as2_review"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="리뷰"/>
+
+            <com.google.android.material.tabs.TabItem
+                android:id="@+id/ti_as2_people"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="사람"/>
+
+            <com.google.android.material.tabs.TabItem
+                android:id="@+id/ti_as2_group"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="그룹"/>
+
+        </com.google.android.material.tabs.TabLayout>
+
+        <FrameLayout
+            android:id="@+id/frame_as2_search"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_weight="1" />
 
     </LinearLayout>
-
 
 
 </LinearLayout>

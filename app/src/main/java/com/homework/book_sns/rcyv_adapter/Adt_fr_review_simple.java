@@ -82,6 +82,10 @@ public class Adt_fr_review_simple extends RecyclerView.Adapter<Adt_fr_review_sim
         items.remove(position);
     }
 
+    public int getItemSize() {
+        return items.size();
+    }
+
     public void clearItem() {
         items.clear();
         notifyDataSetChanged();

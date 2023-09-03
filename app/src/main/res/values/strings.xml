@@ -21,4 +21,12 @@
 
     <string name="hello_first_fragment">Hello first fragment</string>
     <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
+
+    <!-- activity_search_001에서 쓰인다. -->
+    <string name="defaultValue_ofShardPreference">defaultValue_ofShardPreference</string>
+    <string name="keyOfShardPreference">preference_book_sns</string>
+
+    <!-- activity_search_001에서 값을 쓰기 위해서 쓰인다. -->
+    <string name="editorKeyOfShardPreference_searchKeyword">user_key_of_search_keyword</string>
+
 </resources>

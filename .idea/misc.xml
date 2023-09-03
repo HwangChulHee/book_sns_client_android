@@ -5,6 +5,7 @@
       <map>
         <entry key="..\:/Users/searc/AndroidStudioProjects/Book_SNS/app/src/main/res/drawable/border_all.xml" value="0.3729166666666667" />
         <entry key="..\:/Users/searc/AndroidStudioProjects/Book_SNS/app/src/main/res/drawable/border_all_gray.xml" value="0.38229166666666664" />
+        <entry key="..\:/Users/searc/AndroidStudioProjects/Book_SNS/app/src/main/res/drawable/border_round.xml" value="0.38229166666666664" />
         <entry key="..\:/Users/searc/AndroidStudioProjects/Book_SNS/app/src/main/res/drawable/border_top.xml" value="0.378125" />
         <entry key="..\:/Users/searc/AndroidStudioProjects/Book_SNS/app/src/main/res/drawable/border_under.xml" value="0.378125" />
         <entry key="..\:/Users/searc/AndroidStudioProjects/Book_SNS/app/src/main/res/drawable/btn_follow.xml" value="0.38229166666666664" />
@@ -88,6 +89,8 @@
         <entry key="..\:/Users/searc/AndroidStudioProjects/Book_SNS/app/src/main/res/layout/activity_review_read_simple.xml" value="0.36614583333333334" />
         <entry key="..\:/Users/searc/AndroidStudioProjects/Book_SNS/app/src/main/res/layout/activity_search.xml" value="0.36614583333333334" />
         <entry key="..\:/Users/searc/AndroidStudioProjects/Book_SNS/app/src/main/res/layout/activity_search002.xml" value="0.2520833333333333" />
+        <entry key="..\:/Users/searc/AndroidStudioProjects/Book_SNS/app/src/main/res/layout/activity_search_001.xml" value="0.36614583333333334" />
+        <entry key="..\:/Users/searc/AndroidStudioProjects/Book_SNS/app/src/main/res/layout/activity_search_002.xml" value="0.33" />
         <entry key="..\:/Users/searc/AndroidStudioProjects/Book_SNS/app/src/main/res/layout/activity_sign_finish.xml" value="0.315625" />
         <entry key="..\:/Users/searc/AndroidStudioProjects/Book_SNS/app/src/main/res/layout/activity_sign_method_api_001.xml" value="0.315625" />
         <entry key="..\:/Users/searc/AndroidStudioProjects/Book_SNS/app/src/main/res/layout/activity_sign_method_normal001.xml" value="0.36614583333333334" />
@@ -103,6 +106,10 @@
         <entry key="..\:/Users/searc/AndroidStudioProjects/Book_SNS/app/src/main/res/layout/fragment_mypage.xml" value="0.33" />
         <entry key="..\:/Users/searc/AndroidStudioProjects/Book_SNS/app/src/main/res/layout/fragment_noti.xml" value="0.36614583333333334" />
         <entry key="..\:/Users/searc/AndroidStudioProjects/Book_SNS/app/src/main/res/layout/fragment_review.xml" value="0.33" />
+        <entry key="..\:/Users/searc/AndroidStudioProjects/Book_SNS/app/src/main/res/layout/fragment_search_entire.xml" value="0.33" />
+        <entry key="..\:/Users/searc/AndroidStudioProjects/Book_SNS/app/src/main/res/layout/fragment_search_group.xml" value="0.33" />
+        <entry key="..\:/Users/searc/AndroidStudioProjects/Book_SNS/app/src/main/res/layout/fragment_search_people.xml" value="0.36614583333333334" />
+        <entry key="..\:/Users/searc/AndroidStudioProjects/Book_SNS/app/src/main/res/layout/fragment_search_review.xml" value="0.36614583333333334" />
         <entry key="..\:/Users/searc/AndroidStudioProjects/Book_SNS/app/src/main/res/layout/item_acl_rcyv_chat_list.xml" value="0.33" />
         <entry key="..\:/Users/searc/AndroidStudioProjects/Book_SNS/app/src/main/res/layout/item_acl_rcyv_chat_msg_client_img.xml" value="0.36614583333333334" />
         <entry key="..\:/Users/searc/AndroidStudioProjects/Book_SNS/app/src/main/res/layout/item_acr_rcyv_chat_msg_client.xml" value="0.33" />
@@ -117,6 +124,7 @@
         <entry key="..\:/Users/searc/AndroidStudioProjects/Book_SNS/app/src/main/res/layout/item_rc1_rcyv_searched_book.xml" value="0.3619791666666667" />
         <entry key="..\:/Users/searc/AndroidStudioProjects/Book_SNS/app/src/main/res/layout/item_rc2_grid_gallery.xml" value="0.3619791666666667" />
         <entry key="..\:/Users/searc/AndroidStudioProjects/Book_SNS/app/src/main/res/layout/item_rc2_rcyv_photos.xml" value="0.33" />
+        <entry key="..\:/Users/searc/AndroidStudioProjects/Book_SNS/app/src/main/res/layout/item_rcy_as1_history_search.xml" value="0.36614583333333334" />
         <entry key="..\:/Users/searc/AndroidStudioProjects/Book_SNS/app/src/main/res/layout/item_review_create_001_rcyv.xml" value="0.33" />
         <entry key="..\:/Users/searc/AndroidStudioProjects/Book_SNS/app/src/main/res/layout/item_review_read_detail_image.xml" value="0.3619791666666667" />
         <entry key="..\:/Users/searc/AndroidStudioProjects/Book_SNS/app/src/main/res/layout/item_review_read_simple.xml" value="0.33" />
